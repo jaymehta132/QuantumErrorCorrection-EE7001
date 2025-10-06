@@ -40,18 +40,87 @@
 \maketitle
 
 \begin{abstract}
-This is the abstract section.
+    Quantum Error Correction (QEC) draws inspiration from classical error correction techniques to safeguard against errors. The 3-bit code serves as a starting point, being able to correct single bit-flip errors. This was then extended by Shor to the 9-bit code, which can correct both bit-flip and phase-flip errors. We shall also review bipartite purification protocols like the BBPSSW protocol and the DEJMPS protocol, which enhance the fidelity of entangled states which is crucial for quantum communication. 
 \end{abstract}
 
 \section{Introduction}
-This is \cite{sample2023} the introduction.
+Quantum mechanics fundamentally changed our understanding of nature, revealing phenomena such as superposition and entanglement that defy classical intuition. Among these, entanglement has emerged as a cornerstone of modern quantum information science. Once regarded primarily as a conceptual puzzle, entanglement is now recognized as a key resource enabling quantum communication, computation, and cryptography. Experimental progress across diverse platforms—photons, trapped ions, atomic ensembles, superconducting circuits—has transformed theoretical proposals into tangible technologies. Yet, the practical realization of large-scale quantum systems remains limited by the inherent fragility of quantum coherence.
 
-\section{Paper I - QEC for Beginners}
-This section deals with the theory presented in the first paper\cite{paper1}.
+Every quantum system interacts inevitably with its surrounding environment, leading to noise and decoherence that degrade quantum states and destroy entanglement. Maintaining high-fidelity quantum information is therefore one of the most pressing challenges in the field. Two complementary strategies have been developed to combat these errors: entanglement purification and quantum error correction (QEC). Both aim to protect and restore the integrity of quantum information, albeit through different mechanisms.
 
-\section{Paper II - Entanglement Purification and QEC}
-This section deals with the theory presented in the first paper\cite{paper2}.
+Entanglement purification addresses the problem of distributing and maintaining entanglement over noisy quantum channels. By locally manipulating multiple imperfect copies of an entangled state and exchanging classical information, distant parties can probabilistically distill a smaller number of states with higher fidelity. Such purified entangled pairs can then serve as reliable channels for quantum teleportation, forming the foundation of quantum repeaters that enable long-distance quantum communication. These protocols, often relying on local operations and two-way classical communication, connect naturally with the principles of QEC—both can be seen as strategies to recover lost coherence and fidelity.
 
+Quantum error correction, in contrast, provides an active and systematic framework for protecting unknown quantum states during computation or transmission. By encoding logical qubits into larger Hilbert spaces of multiple physical qubits, QEC enables the detection and correction of errors without direct measurement of the encoded information. The development of the first quantum codes in 1995 demonstrated that reliable, large-scale quantum computation was in principle possible. Subsequent advances introduced the stabilizer formalism, concatenated codes, and fault-tolerant architectures capable of withstanding realistic error rates below certain thresholds. Modern extensions—including subsystem and topological codes—offer powerful and scalable means of achieving fault-tolerant quantum processing.
+
+Together, entanglement purification and quantum error correction constitute the theoretical backbone of fault-tolerant quantum information processing. They transform the unavoidable imperfections of physical systems into manageable errors, bridging the gap between fragile quantum hardware and the robust manipulation of information necessary for the future of quantum technologies.
+
+\section{Quantum Errors}
+We must note that coding based on data redundancy is not directly applicable to quantum information due to the no-cloning theorem, which prohibits the creation of identical copies of an arbitrary unknown quantum state. We also cannot perform direct measurements on qubits to detect errors, as this would collapse their superposition states. Additionally, quantum errors can be more complex as they are continuous in nature, unlike classical errors which are typically discrete (bit-flip or no bit-flip). QEC essentially relies on using data redundancy in a more sophisticated manner, encoding a single logical qubit into multiple physical qubits to protect against errors. Let us consider some common types of quantum errors.
+
+\subsection{Types of Quantum Errors}
+
+Consider the following two operations on a qubit:
+\begin{itemize}
+    \item \begin{equation}
+        | \psi \rangle = \prod_{i = 1}^{N} I_i |0\rangle = |0 \rangle
+    \end{equation}
+
+    \item \begin{equation}
+        | \psi \rangle = HIH |0\rangle = |0 \rangle
+    \end{equation}
+\end{itemize}
+
+Note that these operations are functionally equivalent to $\sigma_I$ gate and are useful for understanding quantum errors.
+\vspace{4pt}
+\subsubsection{Coherent Errors}
+These types of errors arise due to incorrect application of quantum gates. Such errors are systematic and can accumulate over time, leading to significant deviations from the intended quantum state. Consider the case where a small rotation is applied to a qubit. This results in the following state:
+
+\begin{equation}
+    | \psi \rangle = \prod_{i = 1}^{N} e^{i \epsilon \sigma_X} |0\rangle = \cos(N \epsilon ) |0\rangle + i \sin(N \epsilon) |1\rangle
+\end{equation}
+
+Hence $P(|0\rangle) = \cos^2(N \epsilon) \approx 1 - (N \epsilon)^2$ and $P(|1\rangle) = \sin^2(N \epsilon) \approx (N \epsilon)^2$. Hence error of order $O(\epsilon^2)$ has been introduced. We shall see that the 3-bit code can be used to supress such errors to $O(\epsilon^6)$.
+
+\vspace{4pt}
+\subsubsection{Environmental Decoherence}
+Consider a system where the environment exists as orthogonal states $|e_0\rangle$ and $|e_1\rangle$. We also assume that the state of the environment flips if the coupled qubit is $|1\rangle$ else there is no change. Hence on application of the operation $HIH$ to the state $|0\rangle |e_0\rangle$, we get:
+
+\begin{equation}
+    | \psi \rangle = HIH |0\rangle |e_0\rangle = \frac{1}{2} (|0\rangle + |1\rangle) |e_0\rangle + \frac{1}{2} (|0\rangle - |1\rangle) |e_1\rangle
+\end{equation}
+
+This results in the following density matrix:
+
+\begin{equation}
+    \begin{aligned}
+        \rho &= |\psi\rangle \langle \psi| \\
+        &= \frac{1}{4} (|0\rangle + |1\rangle)(\langle 0| + \langle 1|) |e_0\rangle \langle e_0| \\
+        &+ \frac{1}{4} (|0\rangle + |1\rangle)(\langle 0| - \langle 1|) |e_0\rangle \langle e_1| \\
+        &+ \frac{1}{4} (|0\rangle - |1\rangle)(\langle 0| + \langle 1|) |e_1\rangle \langle e_0| \\
+        &+ \frac{1}{4} (|0\rangle - |1\rangle)(\langle 0| - \langle 1|) |e_1\rangle \langle e_1|
+    \end{aligned}
+\end{equation}
+
+We can trace out the environment to get the reduced density matrix of the qubit as:
+
+\begin{equation}
+    \rho_q = \frac{1}{2} (|0\rangle \langle 0| + |1\rangle \langle 1|)
+\end{equation}
+
+Hence on measurement of the qubit, we get $|0\rangle$ or $|1\rangle$ with equal probability and hence the qubit has completely decohered.
+
+\vspace{4pt}
+\subsubsection{Loss, Leakage, Measurement and Initialization Errors}
+TODO: summarise the section with the same name from QEC for beginners.
+
+\section{Entanglement Purification and QEC}
+TODO: Introduce need for purification by considering teleportation
+
+\section{3-bit and 9-bit Shor Code}
+TODO: Briefly explain why the codes work \cite{paper1}
+
+\section{Bipartite Purification Protocols}
+TODO: Explain BBPSSW and DEJMPS protocols \cite{paper2}
 
 \section{Implementation and Experimental Results}
 This section deals with the implementation and experimental results.
