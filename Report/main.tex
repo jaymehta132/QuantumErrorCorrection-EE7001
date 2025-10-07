@@ -114,13 +114,32 @@ Hence on measurement of the qubit, we get $|0\rangle$ or $|1\rangle$ with equal 
 TODO: summarise the section with the same name from QEC for beginners.
 
 \section{Entanglement Purification and QEC}
-TODO: Introduce need for purification by considering teleportation
+We can transmit quantum information over a channel using teleportation. Recall that teleportation involves the users Alice and Bob to share a maximally entangled state (like $| \phi^+ \rangle$) and then Alice performing a Bell measurement on her half of the entangled state and the qubit to be transmitted. She then sends the result of the measurement to Bob over a classical channel, who then applies a unitary operation on his half of the entangled state to get the original qubit. However in the presence of a noisy channel, the act of sending one half of the entangled state to Bob will result in a noisy non-maximally entagled state. This in turn affects the fidelity of the teleported qubit. To combat this, multiple copies of the noisy entangled state are produced and then purified using entanglement purification which essentially means increasing entanglement of a few copies. \par
 
+These purification protocols can be categorized as distillation, recurrence and pumping schemes. Distillation involves applying local operations to multiple copies of noisy states to generate a few states with higher fidelity. The latter two involved repeating the purification step multiple times to improve the fidelity of states.
 \section{3-bit and 9-bit Shor Code}
-TODO: Briefly explain why the codes work \cite{paper1}
+TODO: Briefly explain why the codes work \cite{paper1} \cite{paper2}
 
 \section{Bipartite Purification Protocols}
-TODO: Explain BBPSSW and DEJMPS protocols \cite{paper2}
+We shall noe discuss the main bipartite purification protocols - the BBPSSW protocol and the DEJMPS protocol which have been outlined in \cite{paper2}. Before we do that we shall define the following:
+
+\begin{equation}
+    | \phi_{00} \rangle = \frac{1}{\sqrt{2}} (|0\rangle_z |0\rangle_x + |1\rangle_z |1\rangle_x)
+\end{equation}
+
+Here $|0\rangle_z$ and $|1\rangle_z$ are the eigenstates of $\sigma_Z$ and $|0\rangle_x$ and $|1\rangle_x$ are the eigenstates of $\sigma_X$ with eigenvalues $\pm 1$ respectively. The other Bell states can be generated as follows:
+
+\begin{equation}
+    | \phi_{ij} \rangle = \sigma_z^i \sigma_z^j | \phi_{00} \rangle
+\end{equation}
+
+Here i, j control the operation on the first and second qubit respectively. We should also note that these bell states are eigenvectors for the operators
+
+\begin{equation}
+    K_1 = \sigma_x^i \sigma_z^j, \quad K_2 = \sigma_z^i \sigma_x^j
+\end{equation}
+
+with eigenvalues $(-1)^i$ and $(-1)^j$ respectively.
 
 \section{Implementation and Experimental Results}
 This section deals with the implementation and experimental results.

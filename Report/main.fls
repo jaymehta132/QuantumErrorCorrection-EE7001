@@ -1,6 +1,6 @@
-PWD c:\Users\Tanay\Documents\EE7001
+PWD c:\Users\Tanay\Documents\EE7001\QuantumErrorCorrection-EE7001\Report
 INPUT C:\Users\Tanay\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
-INPUT c:\Users\Tanay\Documents\EE7001\main.tex
+INPUT c:\Users\Tanay\Documents\EE7001\QuantumErrorCorrection-EE7001\Report\main.tex
 OUTPUT main.log
 INPUT .\IEEEtran.cls
 INPUT IEEEtran.cls
