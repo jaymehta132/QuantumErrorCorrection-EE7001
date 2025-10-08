@@ -4,6 +4,10 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{cite}
+\usepackage{amsthm}
+
+\newtheorem{claim}{Claim}
+\newtheorem{definition}{Definition}
 
 
 
@@ -283,7 +287,52 @@ Here i, j control the operation on the first and second qubit respectively. We s
     K_1 = \sigma_x^i \sigma_z^j, \quad K_2 = \sigma_z^i \sigma_x^j
 \end{equation}
 
-with eigenvalues $(-1)^i$ and $(-1)^j$ respectively.
+with eigenvalues $(-1)^i$ and $(-1)^j$ respectively. We may use these bell bases vectors to express a mixed state $\rho_{AB}'$ shared between Alice and Bob as follows:
+
+\begin{equation}
+    \rho_{AB}' = \sum_{k_1, k_2, j_1, j_2 = 0}^{1} \lambda_{k_1 k_2 j_1 j_2} | \phi_{k_1 k_2} \rangle \langle \phi_{j_1 j_2} |
+\end{equation}
+
+Consider the operators $\{I, K_1, K_2, K_1 K_2\}$. If we apply say $K_1$ on the basis states $| \phi_{k_1 k_2} \rangle$, we get back the same state if $k_1 = 0$ and we get $- | \phi_{k_1 k_2} \rangle$ if $k_1 = 1$. Hence all off-diagonal terms (diagonal entries are those where $k_1 = j_1$ and $k_2 = j_2$) in $\rho_{AB}'$ will assume the form $(-1)^{k_1 \oplus j_1} | \phi_{k_1 k_2} \rangle \langle \phi_{j_1 j_2} |$. Now if we consider probabilistic application of $K_1$ then the density operator will be transformed as follows:
+
+\begin{equation}
+    \rho_{AB}' \rightarrow (1-p)\rho_{AB}' + p K_1 \rho_{AB}' K_1^\dagger
+\end{equation}
+
+And for $p = 0.5$, we see that all off diagonal terms where $k_1 \neq j_1$ will vanish. Similarly we can cancel out the other off-diagonal terms by application of an appropriate operator. We shall now claim the following.
+
+\begin{claim}
+    The procedure outlined above does not affect the fidelty of the state.
+\end{claim}
+
+\begin{proof}
+    Let $\rho' = \sum_{k \in K} \alpha_k k \rho k^\dagger$ where $K$ is the above set of operators and $\alpha_k$ are probabilities. Then we have:
+    \begin{equation}
+        \begin{aligned}
+            F(\rho') &= \langle \phi_{00} | \rho' | \phi_{00} \rangle \\
+            &= \sum_{k \in K} \alpha_k \langle \phi_{00} | k \rho k^\dagger | \phi_{00} \rangle \\
+            &= \sum_{k \in K} \alpha_k \langle \phi_{00} | \rho | \phi_{00} \rangle \\
+            &= F(\rho)
+        \end{aligned}
+    \end{equation}
+    This is because $k | \phi_{00} \rangle = | \phi_{00} \rangle$ for all $k \in K$.
+\end{proof}
+
+\cite{paper2} also highlights that we can indeed reduce this further so that only the diagonal terms remain. This is done by applying the operators of the form $U \otimes HU^*H$ as it leaves $| \phi_{00} \rangle$ invariant upto a phase and transforms the other bell states.
+
+\begin{claim}
+    Operators of the form $U \otimes HU^*H$ leave $| \phi_{00} \rangle$ invariant upto a phase.
+\end{claim}
+
+\begin{proof}
+    Consider the state $| \phi^+ \rangle = \frac{1}{\sqrt{2}} (|0\rangle_z |0\rangle_z + |1\rangle_z |1\rangle_z)$. We can represent the defined bell states $| \phi_{00} \rangle$ in terms of $| \phi^+ \rangle$ as follows:
+
+    \begin{equation}
+        | \phi_{00} \rangle = (I \otimes H) | \phi^+ \rangle
+    \end{equation}
+
+    Also note 
+\end{proof}
 
 \section{Implementation and Experimental Results}
 This section deals with the implementation and experimental results.
