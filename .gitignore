@@ -1,3 +1,10 @@
 Codes/ee7001env
 */__pycache__/
 */*/__pycache__/
+Report/*.aux
+Report/*.bbl
+Report/*.blg
+Report/*.fdb_latexmk
+Report/*.fls
+Report/*.log
+Report/*.synctex.gz
