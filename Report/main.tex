@@ -335,8 +335,91 @@ And for $p = 0.5$, we see that all off diagonal terms where $k_1 \neq j_1$ will 
         | \phi_{00} \rangle = (I \otimes H) | \phi^+ \rangle
     \end{equation}
 
-    Also note 
+    Also note  that $(U \otimes U^*) | \phi^+ \rangle = | \phi^+ \rangle$. Using this we get:
+
+    \begin{equation}
+        \begin{aligned}
+            (U \otimes HU^*H) | \phi_{00} \rangle &= (U \otimes HU^*H)(I \otimes H) | \phi^+ \rangle \\
+            &= (U \otimes HU^*) | \phi^+ \rangle \\
+            &= (I \otimes H) (U \otimes U^*) | \phi^+ \rangle = | \phi_{00} \rangle
+        \end{aligned}
+    \end{equation}
 \end{proof}
+
+This allows us to simplify the density matrix to a Werner state of the form:
+
+\begin{equation}
+    \rho_w(x) = x | \phi_{00} \rangle \langle \phi_{00} | + \frac{1-x}{4} I_4
+\end{equation}
+
+Here the fidelity of the state is given by $F = \langle \phi_{00} | \rho_w(x) | \phi_{00} \rangle = \frac{3x + 1}{4}$ and we see that we can reduce any state with fidelity $F$ to a Werner form. Hence any entanglement purification protocol that works for Werner states will work for any general state with the same fidelity.
+
+
+\subsection{BBPSSW Protocol}
+This protocol enables creation of a maximally entangled state from several copies of a mixed state $\rho$, assuming that the fidelity $F$ with some maximally entangled state is greater than $1/2$. It proceeds as follows:
+
+\begin{enumerate}
+    \item 
+\end{enumerate}
+
+\subsection{Fidelity After One Purification Step}
+
+Let the initial fidelity of the Werner state be $F$.
+After one successful purification round, the state of the surviving pairs
+remains Werner form with fidelity $F'$ given by
+\begin{equation}
+F' = \frac{F^2 + \left(\frac{1-F}{3}\right)^2}
+{F^2 + \frac{2F(1-F)}{3} + 5\left(\frac{1-F}{3}\right)^2}.
+\label{eq:BBPSSW_map}
+\end{equation}
+The denominator is the \emph{success probability} of the purification step:
+\begin{equation}
+p_{\text{succ}} = F^2 + \frac{2F(1-F)}{3} + 5\left(\frac{1-F}{3}\right)^2.
+\end{equation}
+
+The map in Eq.~(\ref{eq:BBPSSW_map}) satisfies
+\[
+F' > F \quad \text{for} \quad F > \frac{1}{2}, \qquad F=1 \text{ is a stable fixed point.}
+\]
+
+Iterating the map
+\[
+F_{n+1} = f(F_n)
+\]
+allows Alice and Bob to drive the fidelity toward unity.
+
+---
+
+\subsection{Asymptotic Behavior and Yield}
+
+Although $p_{\text{succ}}\to1$ as $F\to1$, 
+each purification round consumes two pairs and keeps only one.
+Hence, the overall \emph{yield} of purified pairs,
+defined as the ratio of output to input pairs, goes to zero in the limit
+of infinite repetitions.
+
+However, for any fixed target fidelity $F>1-\epsilon_0$,
+a finite number of purification rounds suffices, giving a finite yield.
+
+In practice, experimental imperfections (gate errors, decoherence, 
+imperfect measurements) limit the achievable fidelity, so $F=1$
+is of theoretical interest only.
+
+\subsection{Summary}
+
+The BBPSSW protocol purifies noisy entangled states
+via bilateral CNOTs, local measurements, and classical communication.
+It converts multiple imperfect pairs into fewer, more entangled ones.
+The fidelity transformation
+\[
+F \longrightarrow F' = 
+\frac{F^2 + \big(\frac{1-F}{3}\big)^2}
+{F^2 + \frac{2F(1-F)}{3} + 5\big(\frac{1-F}{3}\big)^2}
+\]
+shows that for $F>1/2$, the process increases entanglement,
+with $F=1$ as an attractive fixed point.
+\```
+
 
 \section{Implementation and Experimental Results}
 In terms of implementation, we have used Qiskit to simulate the 3-bit and 9-bit Shor code. The codes can be found in the Codes directory of the \href{https://github.com/jaymehta132/QuantumErrorCorrection-EE7001}{repository}. The methodology used and results obtained are mentioned as follows: 
