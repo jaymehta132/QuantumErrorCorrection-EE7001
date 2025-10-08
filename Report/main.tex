@@ -502,8 +502,18 @@ The results obtained are as follows:
 
 This histogram shows that the output is "0" with a probability of 1, indicating that the error correction was successful and the logical qubit was restored to its original state as the final measurement is done in the X-basis.
 \section{Conclusion}
-This is the conclusion.
+This report has provided a comprehensive overview of Quantum Error Correction (QEC) and Entanglement Purification, two complementary and essential strategies for overcoming the inherent fragility of quantum systems against noise and decoherence
 
+\subsection{Summary of Key Findings and Protocols}
+We first established the critical need for error mitigation by detailing various types of quantum errors, including coherent errors, environmental decoherence, and practical imperfections such as loss, leakage, measurement, and initialization errors. We then reviewed the fundamental QEC protocols that form the basis of fault-tolerant quantum computation:
+\begin{itemize}
+    \item \textbf{3-Qubit Bit-Flip Code:} This simple yet illustrative code protects against single bit-flip errors by encoding a logical qubit into three physical qubits. We demonstrated how syndrome measurement using ancilla qubits allows for error detection and correction, improving fidelity from $1-\epsilon^2$ to $1-\epsilon^6$ for small coherent errors.
+    \item \textbf{9-Qubit Shor Code:} This more sophisticated code extends protection to arbitrary single-qubit errors (both bit-flip and phase-flip) by combining bit-flip and phase-flip codes. We highlighted its degenerate nature and the use of multiple ancilla qubits for syndrome extraction, showcasing its ability to restore logical qubits with high fidelity.
+\end{itemize}
+In addition to QEC, we reviewed bipartite entanglement purification protocols, specifically the BBPSSW protocol. This protocol enables the distillation of high-fidelity entangled states from multiple noisy copies, which is crucial for reliable quantum communication and teleportation.We demonstrated how it converts multiple noisy entangled pairs into fewer pairs with higher fidelity, using bilateral CNOT operations and post-selection based on measurement outcomes.
+
+\subsection{Significance and Future Outlook}
+The successful simulation of the 3-bit and 9-bit codes using Qiskit validates the theoretical frameworks of QEC. Together, QEC and entanglement purification provide the theoretical and practical foundation for building fault-tolerant quantum information processing systems. By bridging the gap between fragile quantum hardware and the robust manipulation of information, these techniques are pivotal for the future realization of large-scale quantum communication, computation, and cryptography. Continued research and experimental progress in both areas will be essential to fully harness the power of quantum technologies.
 \bibliographystyle{IEEEtran}
 \bibliography{refs.bib}
 
