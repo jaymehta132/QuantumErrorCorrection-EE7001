@@ -61,7 +61,7 @@ counts = result.get_counts()
 
 # Output
 print("Measurement counts:", counts)
-print(qc.draw('mpl', filename=f'{results_dir}3bitCodeCircuit.png'))
+print(qc.draw('mpl', filename=f'{results_dir}3bitCodeCircuit.png', fold=0))
 plt.show()
 plot_histogram(counts)
 plt.savefig(f'{results_dir}3bitCodeHistogram.png')

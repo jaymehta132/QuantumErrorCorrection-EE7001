@@ -1,5 +1,7 @@
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_aer import AerSimulator
+from qiskit.visualization import plot_histogram
+import matplotlib.pyplot as plt
 
 results_dir = 'results/9bitCode/'
 import os
@@ -82,6 +84,8 @@ qc.cx(q[7], a[5]); qc.cx(q[8], a[5]); qc.measure(a[5], syn[5]); qc.reset(a[5])
 for i in [6,7,8]:
     qc.h(q[i])
 
+print(qc.draw('text'))
+print(qc.draw('mpl', filename=results_dir+'SyndromeMeasurementCircuit.png', fold=0))
 # --------------------------
 # Run single-shot syndrome to determine corrections
 # --------------------------
@@ -150,6 +154,11 @@ t_final = transpile(final_qc, sim)
 job2 = sim.run(t_final, shots=FINAL_SHOTS)
 res2 = job2.result()
 counts = res2.get_counts()
+
+plot_histogram(counts)
+plt.savefig(f'{results_dir}FinalHistogram.png')
+plt.show()
+plt.close()
 
 print("\nFinal measurement counts after correction (|+> → |0>):")
 print(counts)

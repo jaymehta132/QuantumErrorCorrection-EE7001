@@ -5,6 +5,8 @@
 \usepackage{graphicx}
 \usepackage{cite}
 \usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{subcaption} 
 
 \newtheorem{claim}{Claim}
 \newtheorem{definition}{Definition}
@@ -337,8 +339,97 @@ And for $p = 0.5$, we see that all off diagonal terms where $k_1 \neq j_1$ will 
 \end{proof}
 
 \section{Implementation and Experimental Results}
-This section deals with the implementation and experimental results.
+In terms of implementation, we have used Qiskit to simulate the 3-bit and 9-bit Shor code. The codes can be found in the Codes directory of the \href{https://github.com/jaymehta132/QuantumErrorCorrection-EE7001}{repository}. The methodology used and results obtained are mentioned as follows: 
+\subsection{3-bit Code for X error}
 
+\href{https://github.com/jaymehta132/QuantumErrorCorrection-EE7001/blob/main/Codes/scripts/3bitCode.py}{This code} implements the three-qubit bit-flip quantum error correction protocol, which protects a logical qubit against a single bit-flip error by encoding, detecting, and correcting errors using quantum gates and measurements. The process begins by encoding a logical qubit into three physical qubits through a Hadamard gate and two CNOT gates, creating an entangled state that distributes the quantum information. A deliberate bit-flip error is then introduced on one of the physical qubits to simulate noise. To detect and locate the error, two ancilla qubits are entangled with the data qubits using CNOT gates, and their measurement reveals the error syndrome without collapsing the encoded quantum information. Based on the measured syndrome, a conditional correction is applied: the corresponding qubit is flipped if an error is detected, ensuring the logical state is restored. Finally, the logical qubit is decoded back to a single qubit and measured to verify successful error correction. The simulation results are visualized and saved, demonstrating the effectiveness of the protocol in correcting single bit-flip errors while preserving quantum coherence.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/3bitCode/3bitCodeCircuit.png}
+    \caption{3-bit Code Circuit for X error}
+    \label{fig:3bitCodeCircuit}
+\end{figure}
+
+The first Hadamard gate is to convert the basis from Z-basis to X-basis. The next two CNOT gates are used to encode the qubit. The X gate is used to introduce an error in the second qubit. The next four CNOT gates are used to detect the error using two ancilla qubits. The measurement of the ancilla qubits gives us the error syndrome which is then used to correct the error using conditional X gates. Finally, we decode the qubit using two CNOT gates and a Hadamard gate and measure it. 
+
+The results obtained are as follows:
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/3bitCode/3bitCodeHistogram.png}
+    \caption{3-bit Code Results for X error}
+    \label{fig:3bitCodeResults} 
+\end{figure}
+
+The last two bits in the histogram represent the ancilla qubits used for error detection. The first bit represents the output of the measurement of the corrected qubit in the X-basis. The results show that the output is "001" with a probability of 1, indicating that the error correction was successful and the logical qubit was restored to its original state. 
+
+\subsection{3-bit Code for Phase error}
+\href{https://github.com/jaymehta132/QuantumErrorCorrection-EE7001/blob/main/Codes/scripts/3bitPhaseEC.py}{This code} simulates the effectiveness of the three-qubit bit-flip quantum error correction code in suppressing small coherent errors, specifically single-qubit X rotations of magnitude $\epsilon$. It first calculates the fidelity of an unencoded qubit state $|0\rangle$ after the error, showing that the fidelity drops by approximately $\epsilon^2$. Next, it encodes the state into three qubits using CNOT gates, applies the same error to all three data qubits, and simulates syndrome extraction using two ancilla qubits via further CNOT gates. The code then post-selects the component where no error is detected (syndrome '00'), normalizes this state, and decodes it back to a single qubit. The fidelity of the corrected, decoded state is calculated and shown to be suppressed to order $\epsilon^6$, demonstrating the power of quantum error correction: the probability of error is reduced from quadratic to sixth order in $\epsilon$. The code outputs and compares both fidelities, confirming that the encoded and corrected state retains much higher fidelity than the unencoded state, as expected from theory.
+\begin{figure}[h!]
+    \centering
+
+    \begin{subfigure}[b]{0.3\columnwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Codes/results/3bitPhaseEC/EncodingCircuit.png}
+        \caption{Encoding Circuit}
+        \label{fig:3bitPhaseECCircuit}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\columnwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Codes/results/3bitPhaseEC/SyndromeMeasurementCircuit.png}
+        \caption{Syndrome Measurement Circuit}
+        \label{fig:3bitPhaseDecodingCircuit}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\columnwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Codes/results/3bitPhaseEC/DecodingCircuit.png}
+        \caption{Decoding Circuit}
+        \label{fig:3bitPhaseAncillaCircuit}
+    \end{subfigure}
+
+    \caption{3-bit Code Circuits for Phase error}
+    \label{fig:three_images}
+\end{figure}
+
+The first circuit (Fig. \ref{fig:3bitPhaseECCircuit}) encodes the qubit using two CNOT gates. The second circuit (Fig. \ref{fig:3bitPhaseDecodingCircuit}) performs syndrome measurement using two ancilla qubits and four CNOT gates. The third circuit (Fig. \ref{fig:3bitPhaseAncillaCircuit}) decodes the qubit back to a single qubit using two CNOT gates. 
+
+The above circuit when implemented in Qiskit shows that the fidelity of the encoded qubit is indeed $1-\epsilon^6$ instead of the $1-\epsilon^2$ of the unencoded qubit.
+
+\subsection{9-bit Shor Code to correct Z error}
+\href{https://github.com/jaymehta132/QuantumErrorCorrection-EE7001/blob/main/Codes/scripts/9bitCode.py}{This code} demonstrates the full process of quantum error correction using the 9-qubit Shor code, which protects a single logical qubit against arbitrary single-qubit phase-flip (Z) errors by encoding it into nine physical qubits. The procedure begins by encoding the logical qubit $|+\rangle$ using a layered approach: first, a three-qubit phase-flip code is applied, and then each of those three qubits is further encoded with a three-qubit bit-flip code, resulting in a 3x3 block structure. After encoding, a phase-flip (Z) error is deliberately injected on one chosen qubit to simulate noise.
+
+To detect and locate the error, the code performs syndrome extraction using six ancilla qubits. Each block of three data qubits is rotated into the X basis with Hadamard gates, and parity checks are performed using CNOT gates and ancilla measurements. The measured syndrome bits reveal which qubit in each block is affected by a phase error. Based on the syndrome, the code determines which physical qubits require a Z correction and applies it.
+
+The final circuit repeats the encoding, injects the same error, applies the determined corrections, and then decodes the logical qubit back to a single qubit using the inverse of the encoding operations. To verify successful error correction, the logical qubit is measured in the X basis; in an ideal simulation, the outcome should be deterministic, confirming that the logical state has been restored. This process illustrates how the Shor code can reliably detect and correct any single-qubit error, preserving quantum information against both bit-flip and phase-flip errors.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/9bitCode/SyndromeMeasurementCircuit.png}
+    \caption{Syndrome Measurement Circuit for 9-bit Code}
+    \label{fig:9bitCodeResults}
+\end{figure}
+The first block encodes the qubit using CNOT and Hadamard gates. The second block adds the Z error in the 2nd qubit. The third block performs the syndrome measurement using 6 ancilla qubits. These measurements are then used to determine the error and correct it which is done in the next circuit.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/9bitCode/FinalCircuit.png}
+    \caption{9-bit Shor Code Circuit for Z error}
+    \label{fig:9bitCodeCircuit}
+\end{figure}
+
+The first two blocks are the same as above. The third block performs the error correction and the final block decodes the qubit back to a single qubit and measures it.
+
+The results obtained are as follows:
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/9bitCode/FinalHistogram.png}
+    \caption{9-bit Code Results for Z error}
+    \label{fig:9bitCodeResults}
+\end{figure}
+
+This histogram shows that the output is "0" with a probability of 1, indicating that the error correction was successful and the logical qubit was restored to its original state as the final measurement is done in the X-basis.
 \section{Conclusion}
 This is the conclusion.
 
