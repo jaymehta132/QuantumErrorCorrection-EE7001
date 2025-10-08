@@ -21,14 +21,6 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
-\bibitem{paper1}
-\BIBentryALTinterwordspacing
-S.~J. Devitt, W.~J. Munro, and K.~Nemoto, ``Quantum error correction for
-  beginners,'' \emph{Reports on Progress in Physics}, vol.~76, no.~7, p.
-  076001, Jun. 2013. [Online]. Available:
-  \url{http://dx.doi.org/10.1088/0034-4885/76/7/076001}
-\BIBentrySTDinterwordspacing
-
 \bibitem{paper2}
 \BIBentryALTinterwordspacing
 W.~Dür and H.~J. Briegel, ``Entanglement purification and quantum error

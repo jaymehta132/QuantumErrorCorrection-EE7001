@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.5.27)  7 OCT 2025 14:49
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.5.27)  8 OCT 2025 14:54
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -254,7 +254,17 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1{C:/Users/Tanay/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}
 
 
-] (main.bbl)
+] [2]
+Overfull \hbox (113.39107pt too wide) detected at line 224
+[]\OML/cmm/m/it/10 E \OT1/cmr/m/n/10 = \OML/cmm/m/it/10 U[] \OT1/cmr/m/n/10 = ([] \OML/cmm/m/it/10 ^^O ^^[[] \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 i [] ^^O ^^[[]\OT1/cmr/m/n/10 )[] = \OML/cmm/m/it/10 c[]^^[[]^^[[]^^[[] \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 c[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^[[]^^[[]^^[[] \OT1/cmr/m/n/10 + [] ) + \OML/cmm/m/it/10 c[]\OT1/cmr/m/n/10 ([] ) + \OML/cmm/m/it/10 c[]^^[[]^^[[]^^[[];
+ []
+
+
+Overfull \hbox (42.77626pt too wide) detected at line 228
+[]\OML/cmm/m/it/10 c[] \OT1/cmr/m/n/10 = [][] \OML/cmm/m/it/10 ^^O;  c[] \OT1/cmr/m/n/10 = \OML/cmm/m/it/10 i [][] ^^O [] ^^O;  c[] \OT1/cmr/m/n/10 = \OMS/cmsy/m/n/10 ^^@ [] \OML/cmm/m/it/10 ^^O [][] ^^O;  c[] \OT1/cmr/m/n/10 = \OMS/cmsy/m/n/10 ^^@\OML/cmm/m/it/10 i [][] ^^O:
+ []
+
+[3] (main.bbl)
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -266,24 +276,26 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[2] (main.aux)
+[4
+
+] (main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-04-11>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 3486 strings out of 474370
- 56522 string characters out of 5740535
- 1945754 words of memory out of 5000000
- 25875 multiletter control sequences out of 15000+600000
- 590271 words of font info for 93 fonts, out of 8000000 for 9000
+ 3487 strings out of 474370
+ 56526 string characters out of 5740535
+ 1947754 words of memory out of 5000000
+ 25874 multiletter control sequences out of 15000+600000
+ 592456 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,8n,65p,1022b,260s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,9n,65p,990b,260s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/Tanay/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (2 pages, 150989 bytes).
+Output written on main.pdf (4 pages, 172272 bytes).
 PDF statistics:
- 70 PDF objects out of 1000 (max. 8388607)
+ 76 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
