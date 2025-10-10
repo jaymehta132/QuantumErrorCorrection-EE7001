@@ -2,6 +2,7 @@
 \documentclass[10pt]{beamer}
 \usetheme{Madrid}
 \usecolortheme{dove}
+\usepackage{subcaption}
 \usepackage{amsmath,amssymb,graphicx}
 \usepackage{hyperref}
 \usepackage{physics} % for \ket, \bra, \tr
@@ -9,6 +10,13 @@
 \author[Tanay, Jay, Rajwardhan]{Tanay Bhat \and Jay Mehta \and Rajwardhan Toraskar}
 \institute[IIT Bombay]{Department of Electrical Engineering\\Indian Institute of Technology, Bombay}
 \date{\today}
+
+\AtBeginSection[]{
+  \begin{frame}
+    \centering
+    \Huge\insertsection
+  \end{frame}
+}
 
 \begin{document}
 
@@ -49,6 +57,7 @@
   \end{itemize}
 \end{frame}
 
+\subsection{Coherent errors}
 \begin{frame}{Coherent errors}
   Small rotation \(U = e^{i\epsilon \sigma_x}\) applied to a qubit \(N\) times:
   \[
@@ -63,6 +72,7 @@
   With QEC we can suppress such errors to higher orders ($O(\epsilon^2) \to O(\epsilon^6)$).
 \end{frame}
 
+\subsection{Decoherence}
 \begin{frame}{Decoherence due to environment}
   Example: system entangles with environment \(\ket{e_0},\ket{e_1}\). The state of the environment flips if the qubit is \(\ket{1}\). Hence on application of the operation \(HIH\) to the state \(\ket{0} \ket{e_0}\), we get:
 
@@ -79,6 +89,93 @@
     \end{equation*}
 
     Hence the qubit is in a completely mixed state, i.e. it has decohered.
+\end{frame}
+\subsection{Loss, Leakage, Measurement and Initialization Errors}
+\begin{frame}{Measurement Errors}
+\textbf{Two Common Models:}
+\begin{enumerate}
+    \item \textbf{POVM Model:}
+    \[
+    F_0 = (1 - p_M)\ket{0}\bra{0} + p_M\ket{1}\bra{1}, \quad
+    F_1 = (1 - p_M)\ket{1}\bra{1} + p_M\ket{0}\bra{0}
+    \]
+    Outcome probabilities:
+    \[
+    \text{Tr}(F_0\rho) = (1-p_M)\text{Tr}(A_0\rho) + p_M\text{Tr}(A_1\rho)
+    \]
+    Post-measurement state remains partially coherent:
+    \[
+    M_0 = \sqrt{1 - p_M}\ket{0}\bra{0} + \sqrt{p_M}\ket{1}\bra{1}
+    \]
+
+    \item \textbf{Bit-Flip Channel Model:}
+    \[
+    \rho' = (1 - p_M)\rho + p_M X\rho X
+    \]
+    Same measurement statistics, but projects directly to $\ket{0}$ or $\ket{1}$.
+\end{enumerate}
+
+\vspace{0.2cm}
+\textit{For practical systems, both models are equivalent since qubits are reinitialized immediately after measurement.}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Qubit Loss}
+\textbf{Definition:} Disappearance of the physical information carrier.  
+\vspace{0.2cm}
+
+\textbf{Model:}
+\[
+\rho \rightarrow \mathrm{Tr}_i(\rho)
+\]
+reduces the Hilbert space dimension.
+
+\vspace{0.2cm}
+\textbf{Implications:}
+\begin{itemize}
+    \item Standard QEC assumes all qubits are accessible.
+    \item Requires \textbf{non-demolition detection} to identify loss events.
+    \item Lost qubits can be replaced, improving resilience.
+\end{itemize}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Initialization Errors}
+\textbf{Two Types:}
+\begin{enumerate}
+    \item \textbf{Incoherent:} Imperfect statistical mixture
+    \[
+    \rho_i = (1 - p_I)\ket{0}\bra{0} + p_I\ket{1}\bra{1}
+    \]
+    \item \textbf{Coherent:} Slightly rotated pure state
+    \[
+    \ket{\psi_i} = \alpha\ket{0} + \beta\ket{1}, \quad |\beta|^2 \ll 1
+    \]
+\end{enumerate}
+
+\vspace{0.2cm}
+\textbf{Effect:} Reduces state preparation fidelity and increases measurement errors.
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Qubit Leakage}
+\textbf{Leakage:} Escape from the computational subspace $\{\ket{0}, \ket{1}\}$ into higher levels.
+\[
+U\ket{0} = \alpha\ket{0} + \beta\ket{1} + \gamma\ket{2}
+\]
+
+\textbf{Consequences:}
+\begin{itemize}
+    \item Violates two-level assumption.
+    \item Causes extra decoherence if $\ket{2}$ decays quickly.
+\end{itemize}
+
+\textbf{Mitigation:}
+\begin{itemize}
+    \item Non-demolition verification of qubit state.
+    \item Pulse refocusing to bring population back to logical subspace.
+    \item Post-fabrication qubit screening.
+\end{itemize}
 \end{frame}
 
 % 3-qubit code
@@ -192,9 +289,176 @@
   \small \url{https://github.com/jaymehta132/QuantumErrorCorrection-EE7001}
 \end{frame}
 
-\begin{frame}{Example figures (placeholders)}
+% \begin{frame}{Example figures (placeholders)}
   
+% \end{frame}
+
+
+%------------------------------------------------
+% \begin{frame}{Overview}
+% \begin{itemize}
+%     \item Simulations implemented using \textbf{Qiskit}.
+%     \item Demonstrated:
+%     \begin{enumerate}
+%         \item 3-bit bit-flip code (X error correction)
+%         \item 3-bit phase error correction
+%         \item 9-bit Shor code (Z error correction)
+%     \end{enumerate}
+%     \item All circuits and results available in the GitHub repository:
+%     \begin{itemize}
+%         \item \url{https://github.com/jaymehta132/QuantumErrorCorrection-EE7001}
+%     \end{itemize}
+%     \item Objective: Validate QEC protocols and verify theoretical fidelity improvements.
+% \end{itemize}
+% \end{frame}
+
+%------------------------------------------------
+\subsection{3-Bit Code for Bit-Flip Error}
+\begin{frame}{3-Bit Code for Bit-Flip (X) Error}
+\textbf{Process:}
+\begin{enumerate}
+    \item Encode logical qubit using Hadamard + 2 CNOTs.
+    \item Inject bit-flip error (X gate) on one qubit.
+    \item Detect error using 2 ancilla qubits and 4 CNOTs.
+    \item Apply conditional correction based on syndrome.
+    \item Decode and measure final qubit.
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Result:} Measured state “001” with probability 1 — successful correction.
+
+\begin{figure}
+  
+  \centering
+  \includegraphics[width=0.7\textwidth]{../../Codes/results/3bitCode/3bitCodeCircuit.png} \\[4pt]
+  \caption{3-bit Code Circuit for X Error}
+\end{figure}
 \end{frame}
+
+%------------------------------------------------
+\begin{frame}{3-Bit Code: X Error Results}
+\begin{itemize}
+    \item Histogram confirms complete recovery of logical qubit.
+    \item Fidelity maintained post-correction.
+    \item Demonstrates robustness of simple repetition code for single X-error.
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.55\textwidth]{../../Codes/results/3bitCode/3bitCodeHistogram.png}
+    \caption{3-bit Code Results for X Error}
+    \label{fig:3bitCodeHistogram}
+\end{figure}
+% \centering
+% \includegraphics[width=0.55\textwidth]{../../Codes/results/3bitCode/3bitCodeHistogram.png} \\[4pt]
+% {\scriptsize Fig. 2: 3-bit Code Results for X Error}
+\end{frame}
+
+%------------------------------------------------
+\subsection{3-Bit Code for Phase Error}
+\begin{frame}{3-Bit Code for Phase Error}
+\textbf{Goal:} Verify suppression of coherent rotation errors $U = e^{i\epsilon \sigma_x}$.
+
+\textbf{Procedure:}
+\begin{itemize}
+    \item Encode qubit via CNOTs.
+    \item Apply small X-rotation ($\epsilon$) to all three data qubits.
+    \item Measure syndrome using two ancillas.
+    \item Decode and compute fidelity.
+\end{itemize}
+
+\textbf{Observation:}
+\[
+F_{\text{unencoded}} = 1 - \epsilon^2 \quad \text{vs.} \quad F_{\text{encoded}} = 1 - \epsilon^6
+\]
+
+\begin{figure}[h!]
+    \centering
+
+    \begin{subfigure}[b]{0.3\columnwidth}
+        \centering
+        \includegraphics[width=0.75\textwidth]{../../Codes/results/3bitPhaseEC/EncodingCircuit.png}
+        \caption{Encoding Circuit}
+        \label{fig:3bitPhaseECCircuit}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\columnwidth}
+        \centering
+        \includegraphics[width=0.75\textwidth]{../../Codes/results/3bitPhaseEC/SyndromeMeasurementCircuit.png}
+        \caption{Syndrome Measurement Circuit}
+        \label{fig:3bitPhaseDecodingCircuit}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\columnwidth}
+        \centering
+        \includegraphics[width=0.75\textwidth]{../../Codes/results/3bitPhaseEC/DecodingCircuit.png}
+        \caption{Decoding Circuit}
+        \label{fig:3bitPhaseAncillaCircuit}
+    \end{subfigure}
+
+    \caption{3-bit Code Circuits for Phase error}
+    \label{fig:three_images}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\subsection{9-Bit Shor Code for Z Error}
+\begin{frame}{9-Bit Shor Code for Z Error}
+\textbf{Overview:}
+\begin{itemize}
+    \item Protects logical qubit against arbitrary single-qubit errors.
+    \item Encodes $|+\rangle$ using layered 3x3 block structure:
+    \begin{itemize}
+        \item Inner: Bit-flip code
+        \item Outer: Phase-flip code
+    \end{itemize}
+    \item Inject phase-flip (Z) error on one qubit.
+    \item Use 6 ancillas for syndrome extraction.
+\end{itemize}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.55\textwidth]{../../Codes/results/9bitCode/SyndromeMeasurementCircuit.png} \\[4pt]
+\caption{9-bit Shor Code — Syndrome Measurement}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{9-Bit Shor Code Results}
+\begin{itemize}
+    \item Syndrome bits identify error location.
+    \item Corrective Z operation restores logical state.
+    \item Decoded qubit measured in X-basis gives deterministic “0”.
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Result:} Successful recovery of logical qubit — validates Shor code's ability to correct any single-qubit error.
+
+\begin{figure}[h!]
+  
+  \centering
+  \includegraphics[width=0.5\textwidth]{../../Codes/results/9bitCode/FinalHistogram.png} \\[4pt]
+  \caption{9-bit Code Results for Z Error}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Summary of Simulations}
+\begin{itemize}
+    \item \textbf{3-bit Code (X error):} Corrects single bit-flip errors with fidelity $\approx 1$.
+    \item \textbf{3-bit Code (Phase error):} Reduces error probability from $O(\epsilon^2)$ to $O(\epsilon^6)$.
+    \item \textbf{9-bit Shor Code:} Corrects arbitrary single-qubit errors using nested redundancy.
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Takeaway:}
+\begin{itemize}
+    \item Qiskit simulations validate theoretical predictions.
+    \item Demonstrate the feasibility of small-scale QEC on near-term quantum hardware.
+\end{itemize}
+\end{frame}
+
 
 % Conclusion
 \section{Conclusion}
@@ -213,8 +477,8 @@
       S. J. Devitt, W. J. Munro, K. Nemoto, ``Quantum error correction for beginners,'' Reports on Progress in Physics, 2013.
     \bibitem{dur2007}
       W. D\"ur and H.-J. Briegel, ``Entanglement purification and quantum error correction,'' Reports on Progress in Physics, 2007.
-    \bibitem{report}
-      Project report (uploaded): ``Quantum Error Correction (EE7001)'' by Tanay Bhat et al. :contentReference[oaicite:2]{index=2}
+    % \bibitem{report}
+    %   Project report (uploaded): ``Quantum Error Correction (EE7001)'' by Tanay Bhat et al. :contentReference[oaicite:2]{index=2}
   \end{thebibliography}
 \end{frame}
 

@@ -9,3 +9,13 @@ Report/*.fls
 Report/*.log
 Report/*.synctex.gz
 Report/*.out
+PPT/midterm/main.aux
+PPT/midterm/*.bbl
+PPT/midterm/*.blg
+PPT/midterm/*.fdb_latexmk
+PPT/midterm/*.fls
+PPT/midterm/*.log
+PPT/midterm/*.synctex.gz
+PPT/midterm/*.out
+PPT/midterm/*.nav
+PPT/midterm/*.snm
