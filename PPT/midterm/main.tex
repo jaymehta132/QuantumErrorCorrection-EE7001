@@ -1,0 +1,221 @@
+% qec_beamer.tex
+\documentclass[10pt]{beamer}
+\usetheme{Madrid}
+\usecolortheme{dove}
+\usepackage{amsmath,amssymb,graphicx}
+\usepackage{hyperref}
+\usepackage{physics} % for \ket, \bra, \tr
+\title[Quantum Error Correction]{Quantum Error Correction and Entanglement Purification}
+\author[Tanay, Jay, Rajwardhan]{Tanay Bhat \and Jay Mehta \and Rajwardhan Toraskar}
+\institute[IIT Bombay]{Department of Electrical Engineering\\Indian Institute of Technology, Bombay}
+\date{\today}
+
+\begin{document}
+
+% Title
+\begin{frame}
+  \titlepage
+  \vfill
+  \centering
+\end{frame}
+
+% Outline
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+% Introduction
+\section{Introduction}
+\begin{frame}{Motivation}
+  \begin{itemize}
+    \item Quantum states are quite sensitive and prone to errors arising due to decoherence, imperfect application of gates and measurments.
+    \item To combat these errors, two main strategies are employed:
+      \begin{itemize}
+        \item \textbf{Entanglement purification} — Use multiple noisy entangled pairs to generate a few high-fidelity pairs.
+        \item \textbf{Quantum error correction (QEC)} — encode logical qubits into many physical qubits to detect and correct errors.
+      \end{itemize}
+    \item In this PPT, we shall analyse the 3-bit and 9-bit Shor codes for QEC and also look at the BBPSSW protocol for entanglement purification.
+  \end{itemize}
+\end{frame}
+
+% Quantum errors
+\section{Quantum Errors}
+\begin{frame}{Types of Quantum Errors}
+  Common categories:
+  \begin{itemize}
+    \item \textbf{Coherent errors}: Systematic over/under rotations (unitary). Generally arise due to incorrect operation of gates.
+    \item \textbf{Environmental decoherence}: Coupling to the environment leads to loss of coherence.
+    \item \textbf{Loss / leakage / measurement / initialization errors}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Coherent errors}
+  Small rotation \(U = e^{i\epsilon \sigma_x}\) applied to a qubit \(N\) times:
+  \[
+    \ket{\psi} = \bigl(e^{i\epsilon \sigma_x}\bigr)^{\otimes N}\ket{0}
+           = \cos(N\epsilon)\ket{0} + i\sin(N\epsilon)\ket{1}.
+  \]
+  Measurement probabilities:
+  \[
+    P(\ket{0})=\cos^2(N\epsilon)\approx 1-(N\epsilon)^2,\qquad 
+    P(\ket{1})\approx (N\epsilon)^2.
+  \]
+  With QEC we can suppress such errors to higher orders ($O(\epsilon^2) \to O(\epsilon^6)$).
+\end{frame}
+
+\begin{frame}{Decoherence due to environment}
+  Example: system entangles with environment \(\ket{e_0},\ket{e_1}\). The state of the environment flips if the qubit is \(\ket{1}\). Hence on application of the operation \(HIH\) to the state \(\ket{0} \ket{e_0}\), we get:
+
+  \begin{equation*}
+    \ket{\psi} = HIH \ket{0} \ket{e_0} = \frac{1}{2}(\ket{0}+\ket{1})\ket{e_0} + \frac{1}{2}(\ket{0}-\ket{1})\ket{e_1}.
+  \end{equation*}
+
+  We can then consider the density matrix of the combined system and trace out the environment to get the reduced density matrix of the system:
+
+    \begin{equation*}
+        \rho = \tr_E(\ket{\psi}\bra{\psi}) = \frac{1}{2} (
+            \ket{0}\bra{0} + \ket{1}\bra{1}
+        )
+    \end{equation*}
+
+    Hence the qubit is in a completely mixed state, i.e. it has decohered.
+\end{frame}
+
+% 3-qubit code
+\section{3-Qubit Bit-Flip Code}
+\begin{frame}{3-Qubit Bit-Flip Code — Encoding}
+  Logical codewords:
+  \[
+    \ket{0}_L=\ket{000},\qquad \ket{1}_L=\ket{111}.
+  \]
+  Encode an arbitrary qubit \(\ket{\psi}=\alpha\ket{0}+\beta\ket{1}\) as
+  \[
+    \ket{\psi}_L=\alpha\ket{000}+\beta\ket{111}.
+  \]
+ 
+  This code is able to correct for any single bit-flip error.
+\end{frame}
+
+\begin{frame}{Syndrome extraction \& correction}
+  Use two ancillas (parity checks). Syndrome table:
+  \[
+    \begin{array}{c|c}
+      \text{Syndrome} & \text{Correction} \\ \hline
+      00 & \text{No error} \\
+      01 & X_3 \\
+      10 & X_2 \\
+      11 & X_1
+    \end{array}
+  \]
+  Circuit: encode with two CNOTs, measure ancillas, apply conditional \(X\).
+\end{frame}
+
+\begin{frame}{Error suppression (coherent small rotations)}
+  For \(U=e^{i\epsilon \sigma_x}\) on each physical qubit:
+  \[
+    E = U^{\otimes 3} = c_0\,\sigma_I\sigma_I\sigma_I
+      + c_1\,(\sigma_x\sigma_I\sigma_I + \dots) + c_2(\dots) + c_3\,\sigma_x\sigma_x\sigma_x,
+  \]
+  where
+  \[
+    c_0=\cos^3\epsilon,\quad c_1=i\cos^2\epsilon\sin\epsilon,\quad c_2=-\cos\epsilon\sin^2\epsilon,\quad c_3=-i\sin^3\epsilon.
+  \]
+  Unencoded fidelity: \(F_{\text{unencoded}}=\cos^2\epsilon\approx 1-\epsilon^2\).
+  
+  After post-selecting the no-error syndrome, encoded fidelity:
+  \[
+    F_{\text{encoded}}\approx 1-\epsilon^6.
+  \]
+  (Error reduced from \(O(\epsilon^2)\) to \(O(\epsilon^6)\).)
+\end{frame}
+
+% Shor code
+\section{9-Qubit Shor Code}
+\begin{frame}{Shor 9-Qubit Code — Logical states}
+  Combine phase-flip and bit-flip repetition codes.
+  \[
+    \ket{0}_L = \frac{1}{2\sqrt{2}} ( \ket{000}+\ket{111} )^{\otimes 3},\quad
+    \ket{1}_L = \frac{1}{2\sqrt{2}} ( \ket{000}-\ket{111} )^{\otimes 3}.
+  \]
+  Each block of 3 corrects an \(X\) error; inter-block checks correct \(Z\) errors.
+\end{frame}
+
+\begin{frame}{How it protects against arbitrary single-qubit errors}
+  An arbitrary single-qubit error can be expanded in Pauli basis.
+  The combined bit-flip and phase-flip checks detect and correct single-qubit \(X\), \(Z\) (and hence \(Y\)) errors.
+  Coherent rotation generalization:
+  \[
+    E=\bigotimes_{i=1}^{9}(\cos\epsilon\,\sigma_I + i\sin\epsilon\,\sigma_x),
+  \]
+  followed by appropriate syndrome circuits increases logical fidelity compared to unencoded qubit.
+\end{frame}
+
+% Purification
+\section{Entanglement Purification (BBPSSW)}
+\begin{frame}{Werner states and depolarization}
+  Any two-qubit state can be depolarized to a Werner form without changing fidelity with \(\ket{\phi_{00}}\):
+  \[
+    \rho_W(x)= x\ket{\phi_{00}}\bra{\phi_{00}} + \frac{1-x}{4} I_4.
+  \]
+  Fidelity relative to \(\ket{\phi_{00}}\): \(F=\bra{\phi_{00}}\rho_W\ket{\phi_{00}}=\frac{3x+1}{4}.\)
+\end{frame}
+
+\begin{frame}{BBPSSW protocol (recurrence)}
+  Starting with pairs of fidelity \(F>1/2\):
+  \begin{enumerate}
+    \item Depolarize to Werner form \(\rho_W(F)\).
+    \item Take two copies; apply bilateral CNOT (A1→A2 and B1→B2).
+    \item Measure target qubits (A2,B2) in \(Z\)- and \(X\)-bases; keep control pair if measurement results match.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Fidelity update and success probability}
+  After one successful purification step the surviving pair (still Werner) has fidelity
+  \[
+    F'=\frac{F^2 + \left(\tfrac{1-F}{3}\right)^2}{F^2 + 2F\big(\tfrac{1-F}{3}\big) + 5\big(\tfrac{1-F}{3}\big)^2},
+  \]
+  and the success probability is
+  \[
+    p_{\text{succ}} = F^2 + 2F\Big(\frac{1-F}{3}\Big) + 5\Big(\frac{1-F}{3}\Big)^2.
+  \]
+  Iterating increases fidelity but reduces yield (consume 2 pairs to keep 1).
+\end{frame}
+
+% Implementation
+\section{Implementation \& Results}
+\begin{frame}{Qiskit simulations}
+  \begin{itemize}
+    \item 3-qubit bit-flip and phase-error simulations: encoding, injecting error, syndrome extraction, correction, decode. Observed fidelity improvement consistent with theory (e.g. \(1-\epsilon^2 \to 1-\epsilon^6\)).
+    \item 9-qubit Shor code simulation: injected single \(Z\) error, used 6 ancillas for syndrome extraction; decoded and observed restored logical state.
+  \end{itemize}
+  Code repository (included in report): \\
+  \small \url{https://github.com/jaymehta132/QuantumErrorCorrection-EE7001}
+\end{frame}
+
+\begin{frame}{Example figures (placeholders)}
+  
+\end{frame}
+
+% Conclusion
+\section{Conclusion}
+\begin{frame}{Conclusions \& Outlook}
+  \begin{itemize}
+    \item QEC and entanglement purification are foundational for fault-tolerant quantum computing and long-distance quantum communication.
+    \item Simple codes (3- and 9-qubit) illustrate suppression of coherent errors and correction of arbitrary single-qubit errors.
+    \item Real devices: gate errors, measurement noise, and leakage limit achievable fidelities; fault-tolerance requires concatenation or more advanced topological/subsystem codes and careful experimental engineering.
+  \end{itemize}
+\end{frame}
+
+% References
+\begin{frame}[allowframebreaks]{References}
+  \begin{thebibliography}{9}
+    \bibitem{devitt2013}
+      S. J. Devitt, W. J. Munro, K. Nemoto, ``Quantum error correction for beginners,'' Reports on Progress in Physics, 2013.
+    \bibitem{dur2007}
+      W. D\"ur and H.-J. Briegel, ``Entanglement purification and quantum error correction,'' Reports on Progress in Physics, 2007.
+    \bibitem{report}
+      Project report (uploaded): ``Quantum Error Correction (EE7001)'' by Tanay Bhat et al. :contentReference[oaicite:2]{index=2}
+  \end{thebibliography}
+\end{frame}
+
+\end{document}

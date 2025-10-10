@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@sectionintoc {2}{Quantum Errors}{4}{0}{2}
+\beamer@sectionintoc {3}{3-Qubit Bit-Flip Code}{7}{0}{3}
+\beamer@sectionintoc {4}{9-Qubit Shor Code}{10}{0}{4}
+\beamer@sectionintoc {5}{Entanglement Purification (BBPSSW)}{12}{0}{5}
+\beamer@sectionintoc {6}{Implementation \& Results}{15}{0}{6}
+\beamer@sectionintoc {7}{Conclusion}{17}{0}{7}
