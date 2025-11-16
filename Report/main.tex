@@ -2,6 +2,7 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb}
+\usepackage{braket}
 \usepackage{graphicx}
 \usepackage{cite}
 \usepackage{amsthm}
@@ -219,20 +220,29 @@ Error correction uses two ancilla qubits to extract a \textit{syndrome} without 
 
 \begin{equation}
 \begin{aligned}
-00 &\quad \text{No error} \\
-01 &\quad \sigma_x \text{ on qubit 3} \\
-10 &\quad \sigma_x \text{ on qubit 2} \\
-11 &\quad \sigma_x \text{ on qubit 1}
+\ket{00} &\quad \text{No error} \\
+\ket{01} &\quad \sigma_x \text{ on qubit 3} \\
+\ket{10} &\quad \sigma_x \text{ on qubit 2} \\
+\ket{11} &\quad \sigma_x \text{ on qubit 1}
 \end{aligned}
 \end{equation}
 
 For coherent rotation errors $U = \exp(i \epsilon \sigma_x)$ on each qubit, the total error operator is
 \begin{equation}
-E = U^{\otimes 3} = (\cos \epsilon\, \sigma_I + i \sin \epsilon\, \sigma_x)^{\otimes 3} = c_0 \sigma_I \sigma_I \sigma_I + c_1 (\sigma_x \sigma_I \sigma_I + \dots) + c_2 (\dots) + c_3 \sigma_x \sigma_x \sigma_x,
+    \begin{aligned}
+        E = U^{\otimes 3} &= (\cos \epsilon\, \sigma_I + i \sin \epsilon\, \sigma_x)^{\otimes 3} \\
+        &= c_0 \sigma_I \sigma_I \sigma_I + c_1 (\sigma_x \sigma_I \sigma_I + \dots) \\
+        &\quad + c_2 (\dots) + c_3 \sigma_x \sigma_x \sigma_x
+    \end{aligned}
 \end{equation}
 with
 \begin{equation}
-c_0 = \cos^3 \epsilon, \quad c_1 = i \cos^2 \epsilon \sin \epsilon, \quad c_2 = -\cos \epsilon \sin^2 \epsilon, \quad c_3 = -i \sin^3 \epsilon.
+    \begin{aligned}
+        c_0 &= \cos^3 \epsilon, \\
+        c_1 &= i \cos^2 \epsilon \sin \epsilon, \\
+        c_2 &= -\cos \epsilon \sin^2 \epsilon, \\
+        c_3 &= -i \sin^3 \epsilon.
+    \end{aligned}
 \end{equation}
 
 After error correction and ancilla measurement, the encoded qubit fidelity is improved from
@@ -270,7 +280,11 @@ E = \bigotimes_{i=1}^{9} (\cos \epsilon\, \sigma_I + i \sin \epsilon\, \sigma_x)
 \end{equation}
 and the combination of X and Z correction circuits restores the logical qubit to a higher fidelity state than the unencoded qubit. The Shor code is thus a full quantum error correcting code capable of correcting arbitrary single-qubit errors.
 
+\section{Stabilizer Codes}
+TODO
 
+\section{Digitization of Quantum Errors}
+TODO
 
 \section{Bipartite Purification Protocols}
 We shall noe discuss the main bipartite purification protocols - the BBPSSW protocol and the DEJMPS protocol which have been outlined in \cite{paper2}. Before we do that we shall define the following:
@@ -352,8 +366,7 @@ This allows us to simplify the density matrix to a Werner state of the form:
     \rho_w(x) = x | \phi_{00} \rangle \langle \phi_{00} | + \frac{1-x}{4} I_4
 \end{equation}
 
-Here the fidelity of the state is given by $F = \langle \phi_{00} | \rho_w(x) | \phi_{00} \rangle = \frac{3x + 1}{4}$ and we see that we can reduce any state with fidelity $F$ to a Werner form. Hence any entanglement purification protocol that works for Werner states will work for any general state with the same fidelity.
-
+Fidelity of the state is given by $F = \langle \phi_{00} | \rho_w(x) | \phi_{00} \rangle = \frac{3x + 1}{4}$ and we see that we can reduce any state with fidelity $F$ to a Werner form. Hence any entanglement purification protocol that works for Werner states will work for any general state with the same fidelity.
 
 \subsection{BBPSSW Protocol}
 This protocol enables creation of a maximally entangled state from several copies of a mixed state $\rho$, assuming that the fidelity $F$ with some maximally entangled state is greater than $1/2$. It proceeds as follows:
@@ -408,6 +421,146 @@ a finite number of purification rounds suffices, giving a finite yield.
 In practice, experimental imperfections (gate errors, decoherence, 
 imperfect measurements) limit the achievable fidelity, so $F=1$
 is of theoretical interest only.
+
+\section{One-Way Entanglement Purfication}
+
+The \cite{Equivalence} paper describes how we can construct one-way entanglement purification protocols (1-EPP) which basically involve Alice and Bob performing local operations and measurements on their respective sharded bits. We now deviate from the usual 2-EPP protocols (like BBPSSW) and have only Alice communicate her measuremnt results to Bob. Bob now uses these in conjunction with his own menasurments and performs local operations to recover the entangled state. One such protocol is one-way hashing.
+
+\subsection{One-Way Hashing}
+
+We shall now describe one such protocol called one-way hashing. The basic idea here is that Alice and Bob start of n impure pairs drawn from a Bell-diagonal state of the form:
+
+\begin{equation}
+    \rho = \sum_{i,j=0}^{1} p_{ij} \ket{\phi_{ij}} \bra{\phi_{ij}}
+\end{equation}
+
+Where $\ket{\phi_{00}} = \ket{\Phi^+}$, $\ket{\phi_{01}} = \ket{\Psi^+}$, $\ket{\phi_{10}} = \ket{\Phi^-}$ and $\ket{\phi_{11}} = \ket{\Psi^-}$. Hence bit $i$ denotes phase error and bit $j$ denotes amplitude error. We then sacrifice some of these pairs to gain information about the remaining ones. Once we know the error syndromes, we can apply appropriate corrections to get maximally entangled pairs. The protocol proceeds as follows:
+
+\begin{enumerate}
+    \item At the start of the $(k+1)^{\text{th}}$ round, both share $n-k$ impure pairs represented by the error vector $x_k$ for $k = 0, 1, \ldots, n-m-1$.
+    \item Alice chooses a random $2(n-k)$ bit string $s$ and sends it to Bob.
+    \item Both of them then perform unitary operations to compute $s \cdot x_k$. 
+    \item Disard the pair used here and repeat till we have $m$ pairs left. The state of these pairs can be determined using the previously obtained $s \cdot x_k$ values.
+    \item Bob applies appropriate corrections to get maximally entangled pairs.
+\end{enumerate}
+
+\cite{Equivalence} shows that the optimal value of $n - m \approx nS(\rho)$ where $S(\rho)$ is the von Neumann entropy of the state $\rho$. Hence the yield of this protocol is given by $m/n \approx 1 - S(\rho)$. We shall now describe this protocol and its workings in more detail.
+
+\subsection{Calculating Parities Using Unitary Operations}
+
+We encode each of the Bell states $\ket{\phi_{ij}}$ as a 2-bit string $ij$. Hence the state of n pairs can be represented as a $2(n-k)$ bit string $s$. Recall that the bit $i$ represents phase error and bit $j$ represents amplitude error. We choose the destination pair as the first pair corresponding to the non-zero bit of $s$. For example if $s = 00 11 10 01$, then we choose $11$ as the detination pair and our goal is to map $s \cdot x_k$ to the amplitude bit of this pair. Note that any $00$ pairs in $s$ can be ignored as they do not contribute to the parity. We now have the following cases:
+
+\begin{table}[h]
+    \centering
+    \caption{Parity-computation cases}
+    \renewcommand{\arraystretch}{1.6}  % Increase row height
+    \setlength{\tabcolsep}{20pt}       % Increase column spacing
+    \begin{tabular}{c | c | c }
+        \hline
+        \textbf{Case} & \textbf{Operation} & \textbf{Gates} \\
+        \hline
+        01 & Do nothing & I \\
+        10 & Swap $i$ and $j$ bits & $B_y$ \\
+        11 & Do $j \to i \oplus j$ & $B_x \sigma_x$ \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Here $B_y = R_y(\pi/2) \otimes R_y(\pi/2)$ and $B_x = R_x(\pi/2) \otimes R_x(\pi/2)$. These gates have the following action on the Bell states (upto a global phase):
+
+\begin{equation}
+    \begin{aligned}
+        B_y &: \ket{\phi_{ij}} \rightarrow \ket{\phi_{ji}} \\
+        B_x &: \ket{\phi_{ij}} \rightarrow \ket{\phi_{i, i \oplus j \oplus 1}}
+    \end{aligned}
+\end{equation}
+
+Since $B_x$ gate XORs an extra 1 to the amplitude bit, we need to apply an additional $\sigma_x$ gate to correct for that. Once this is done for all pairs in $s$, we perform bilateral CNOT operations using each source pair as control and the destination pair as target. Finally performing measurement in bell basis on the destination pair gives us the required parity $s \cdot x_k$. For the example above, the circuit would look like:
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.45\textwidth]{OWHash.png}
+    \caption{One-Way Hashing}
+    \label{fig:OWHashCircuit}
+\end{figure}
+
+A $\Phi$ state implies 0 parity and a $\Psi$ state implies 1 parity. Hence the remaining pairs form $x_{k+1} = f_{s_k}(x_k)$. Let $b_k$ denote the measurement result (0 or 1) at round $k$. The remaining bell states are characterized by the string $x_{k+1} \in \mathbb{Z}_2^{2(n-k-1)}$ and this string can be determined from the previous string $x_k$ and $s_k$ once we know $f_{s_k}$. Once we have $m$ pairs left, we can determine the error syndromes and apply appropriate corrections to get maximally entangled pairs.
+
+\subsection{Optimization of Sacrificial Pairs}
+
+Before optimizing for $m$, we first note that the probability of two different error strings $x$ and $y$ giving same parity for a random $s$ is $1/2$. This is true as $P(s \cdot x = s \cdot y) = P(s \cdot (x \oplus y) = 0)$ and since we know that $x \oplus y \neq 0$ WLOG, assume that the first bit of $x \oplus y$ is 1 at some postions indexed by the set $I$. Then clearly our inner product reduces to:
+
+\begin{equation}
+    s \cdot (x \oplus y) = \sum_{i \in I} s_i
+\end{equation}
+
+As $s$ is random, the probability that this sum is 0 is $1/2$. We also consider the typical set $\mathcal{T}_\epsilon^{n}$ which is defined as:
+
+\begin{equation}
+    \mathcal{T}_\epsilon^{n} = \left\{ x \in \mathbb{Z}_2^{2n} : \left| -\frac{1}{n} \log_2 p(x) - S(\rho) \right| \leq \epsilon \right\}
+\end{equation}
+
+Note that as $n \rightarrow \infty$ we have:
+
+\begin{equation}
+    P(x \in \mathcal{T}_\epsilon^{n}) = P\left(\left| -\frac{1}{n} \log_2 p(x) - S(\rho) \right| \leq \epsilon\right) \to 1
+\end{equation}
+
+as the left hand side tends to 0 by LLN. We can also bound the size of this typical set as follows:
+
+\begin{equation}
+    (1 - \epsilon) 2^{n(S(\rho) - \epsilon)} \leq |\mathcal{T}_\epsilon^{n}| \leq 2^{n(S(\rho) + \epsilon)}
+\end{equation}
+
+Hence as $n \rightarrow \infty$, we have $|\mathcal{T}_\epsilon^{n}| \approx 2^{nS(\rho)}$. We now consider strings $x_k$ and $y_k$ which were formed by subjecting the strings $x_0$ and $y_0$ to $k$ rounds of one-way hashing with same $s_0, s_1, \ldots, s_{k-1}$. From this we have:
+
+\begin{equation}
+    P((x_k \neq y_k) \land \forall j \ s_j \cdot x_j = s_j \cdot y_j) \leq 2^{-k}
+\end{equation}
+
+Since we know that $x \in \mathcal{T}_\epsilon^{n}$ w.p atleast $1 - \epsilon$, after r = $n - m$ rounds of hashing, we can bound the failure probability as follows:
+
+\begin{equation}
+    \begin{aligned}
+        P_{\text{fail}} &\leq P(x_0 \notin \mathcal{T}_\epsilon^{n}) \\
+        &\quad + \sum_{y_j \in \mathcal{T}_\epsilon^{n}} P(x_j \neq y_j \land \forall j \ s_j \cdot (x_j \oplus y_j) = 0) \\
+        &\leq \epsilon + |\mathcal{T}_\epsilon^{n}| 2^{-r} \\
+        &\leq \epsilon + 2^{n(S(\rho) + \epsilon) - (n - m)} \\
+    \end{aligned}
+\end{equation}
+
+By choosing $m = n(1 - S(\rho) - \epsilon)$, we can make $P_{\text{fail}}$ arbitrarily small as $n \rightarrow \infty$. Hence the yield of this protocol is given by $m/n \approx 1 - S(\rho)$.
+
+\section{One-Way EPP and QECC Equivalence}
+The main idea outlined in \cite{Equivalence} is that a one-way entanglement purification protocol (1-EPP) can be transformed into a quantum error-correcting code (QECC) and vice versa. Let $\mathcal{Q}(\chi(M))$ denote the quantum channel capacity of a channel $\chi$ and let $D(M)$ denote the one-way distillable entanglement of a mixed state $M$. We show that $\mathcal{Q}(\chi(M)) \leq D(M)$ and $D(M) \leq \mathcal{Q}(\chi(M))$ thus proving the equivalence. Both of these proofs are constructive in nature.
+
+\subsection{QECC implies 1-EPP}
+
+Consider a quantum teleportation protocol where Alice and Bob share mixed states $M$ instead of $\ket{\Phi^+}$. We may represent $M$ as:
+
+\begin{equation}
+    \rho_M = \sum_{i, j = 0}^{1} p_{ij} \ket{\phi_{ij}} \bra{\phi_{ij}}
+\end{equation}  
+
+Hence, with probability $p_{00}$, the teleportation works perfectly, else the final state is affected by some bit-flip or phase-flip error. We construct the following purification protocol:
+
+\begin{enumerate}
+    \item Alice prepares to send $n$ qubits by first creating $m$ $\ket{\phi_{00}}$ states and encoding half of each and $n-m$ ancilla qubits using a QECC.
+    \item This encoded state is then teleported to Bob over the noisy channel using $n$ copies of $M$.
+    \item Bob applies the error-correction procedure of the QECC to recover the $m$ half of the $\ket{\phi_{00}}$ states along with the $n-m$ ancilla qubits.
+\end{enumerate}
+
+Clearly we were able to purify $m$ maximally entangled states from $n$ copies of $M$ using only one-way classical communication from Alice to Bob. Hence, by using a QECC with rate $m/n$, we were able to construct a 1-EPP with yield atleast $m/n$. Thus we have $\mathcal{Q}(\chi(M)) \leq D(M)$.
+
+\subsection{1-EPP implies QECC}
+Consider a 1-EPP protocol which purifies $m$ maximally entangled states from $n$ copies of a mixed state $M$ using only one-way classical communication. We construct the following QECC:
+
+\begin{enumerate}
+    \item Alice and Bob apply the 1-EPP protocol on $n$ copies of $M$ to obtain $m = nD(M)$ maximally entangled states.
+    \item Alice then prepares $m$ qubits of the state she wants to send and teleports them to Bob using the $m$ maximally entangled states.
+\end{enumerate}
+
+Hence by using a 1-EPP with yield $m/n$, we were able to construct a QECC with rate atleast $m/n$ as we were able to send $m$ qubits. This involved the use of only one-way classical communication from Alice to Bob. \cite{Equivalence} further proves that we can achieve the same rate without any classical communication. Thus we have $D(M) \leq \mathcal{Q}(\chi(M))$. Thus we have proved the equivalence between 1-EPP and QECC.
 
 \section{Implementation and Experimental Results}
 In terms of implementation, we have used Qiskit to simulate the 3-bit and 9-bit Shor code. The codes can be found in the Codes directory of the \href{https://github.com/jaymehta132/QuantumErrorCorrection-EE7001}{repository}. The methodology used and results obtained are mentioned as follows: 
