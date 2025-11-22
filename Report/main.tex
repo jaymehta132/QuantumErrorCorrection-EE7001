@@ -378,7 +378,7 @@ This protocol enables creation of a maximally entangled state from several copie
     \item Keep the pair $A_1 B_1$ if $\zeta = \xi$.
 \end{enumerate}
 
-\subsection{Fidelity After One Purification Step}
+\subsubsection{Fidelity After One Purification Step}
 
 Let the initial fidelity of the Werner state be $F$.
 After one successful purification round, the state of the surviving pairs
@@ -407,7 +407,7 @@ Then we select states in $A_2B_2$ which are eigenstates of the operator $K_2^{A_
 
 Then its evident that success probability = $(F + \frac{1-F}{3})^2 + 2(\frac{1-F}{3})^2$ and the new fidelity $F'$ is given by the ratio of the first term to the success probability. The control pair after the purification step is $(k_1 \oplus j_1, k_2)$ and the probability that this is $(0,0)$ is given by $F^2 + (\frac{1-F}{3})^2$. Thus we get the expression for $F'$ as given in equation \ref{eq:BBPSSW_map}. And not that this increases with the iterations.
 
-\subsection{Asymptotic Behavior and Yield}
+\subsubsection{Asymptotic Behavior and Yield}
 
 Although $p_{\text{succ}}\to1$ as $F\to1$, 
 each purification round consumes two pairs and keeps only one.
@@ -422,6 +422,81 @@ In practice, experimental imperfections (gate errors, decoherence,
 imperfect measurements) limit the achievable fidelity, so $F=1$
 is of theoretical interest only.
 
+\subsection{DEJMPS Protocol}
+The DEJMPS protocol, introduced by Deutsch et al., is a recurrence protocol for entanglement purification that improves upon the earlier BBPSSW protocol. While BBPSSW is designed primarily for Werner states, the DEJMPS protocol operates effectively on the broader class of states diagonal in the Bell basis. Its primary advantage lies in its higher efficiency and its ability to purify states with heavy phase noise by introducing local basis rotations that convert phase errors into detectable bit-flip errors.
+
+\subsubsection{Mathematical Setup}
+We consider a bipartite system (Alice and Bob) described by the Bell basis states:
+\begin{align}
+    |\Phi^+\rangle &= \frac{1}{\sqrt{2}}(|00\rangle + |11\rangle) \nonumber \\
+    |\Phi^-\rangle &= \frac{1}{\sqrt{2}}(|00\rangle - |11\rangle) \nonumber \\
+    |\Psi^+\rangle &= \frac{1}{\sqrt{2}}(|01\rangle + |10\rangle) \nonumber \\
+    |\Psi^-\rangle &= \frac{1}{\sqrt{2}}(|01\rangle - |10\rangle)
+\end{align}
+An arbitrary state $\rho$ diagonal in the Bell basis can be described by four real coefficients $\lambda_{ij}$:
+\begin{align}
+    \rho = & \lambda_{00}|\Phi^+\rangle\langle\Phi^+| + \lambda_{01}|\Phi^-\rangle\langle\Phi^-| \\ &+ \lambda_{10}|\Psi^+\rangle\langle\Psi^+| + \lambda_{11}|\Psi^-\rangle\langle\Psi^-|
+\end{align}
+where $\sum \lambda_{ij} = 1$. Here, $\lambda_{00}$ represents the fidelity $F$ with respect to the ideal state $|\Phi^+\rangle$.
+
+\subsubsection{Protocol Steps}
+The protocol operates on two identical copies of the noisy state $\rho$, denoted as the source pair ($\rho_1$) and the target pair ($\rho_2$).
+
+\begin{enumerate}
+\item{Local Basis Rotation (The Twirl)}
+Before the interaction, Alice and Bob apply local unitary operations $U_A$ and $U_B$ to their respective qubits in both pairs. This operation distinguishes DEJMPS from BBPSSW. The transformation is defined as:
+\begin{align}
+    U_A: |0\rangle_A &\to \frac{1}{\sqrt{2}}(|0\rangle_A - i|1\rangle_A),  \\
+    |1\rangle_A &\to \frac{1}{\sqrt{2}}(|1\rangle_A - i|0\rangle_A) \nonumber \\
+    U_B: |0\rangle_B &\to \frac{1}{\sqrt{2}}(|0\rangle_B + i|1\rangle_B),  \\
+    |1\rangle_B &\to \frac{1}{\sqrt{2}}(|1\rangle_B + i|0\rangle_B)
+\end{align}
+This corresponds to a rotation $R_x(\frac{\pi}{2})$ on Alice's qubits and the inverse rotation $R_x(-\frac{\pi}{2})$ on Bob's qubits.
+\textbf{Physical Interpretation:} This rotation permutes the Bell coefficients. Specifically, it swaps the population of the phase-error state $|\Phi^-\rangle$ ($\lambda_{01}$) with the bit-plus-phase error state $|\Psi^-\rangle$ ($\lambda_{11}$)[cite: 2301]. This essentially converts phase errors into bit errors, which are detectable by the subsequent parity check.
+
+\item{Bilateral CNOT Gate}
+Alice performs a CNOT gate using her qubit in pair 1 as the control and her qubit in pair 2 as the target. Bob does the same on his side. The transformation of two Bell states $|\Phi_{k_1 k_2}\rangle \otimes |\Phi_{j_1 j_2}\rangle$ under bilateral CNOT is given by \cite{paper2}:
+\begin{equation}
+    |\Phi_{k_1 k_2}\rangle |\Phi_{j_1 j_2}\rangle \xrightarrow{CNOT^{\otimes 2}} |\Phi_{k_1 \oplus j_1, k_2}\rangle |\Phi_{j_1, k_2 \oplus j_2}\rangle
+\end{equation}
+This operation propagates bit-flip errors ($k_1$ index) forward from source to target, and phase-flip errors ($k_2$ index) backward from target to source.
+
+\item{Measurement and Post-Selection}
+Alice and Bob measure the target pair (pair 2) in the computational $Z$-basis ($|0\rangle, |1\rangle$). 
+\begin{itemize}
+    \item If the measurement results coincide ($00$ or $11$), the operation was likely error-free regarding bit-flips. The source pair is kept.
+    \item If the results differ ($01$ or $10$), the source pair is discarded.
+\end{itemize}
+This measurement projects the target pair onto the subspace where $k_2 \oplus j_2 = 0$, effectively filtering out instances where bit-flip errors occurred in one pair but not the other.
+\end{enumerate}
+
+\subsubsection{Recursive Map for Density Matrix Coefficients}
+If the purification step succeeds, the new coefficients $\lambda'_{ij}$ of the source pair are updated according to the following non-linear map derived in Ref \cite{paper2}:
+
+\begin{align}
+    \lambda'_{00} &= \frac{\lambda_{00}^2 + \lambda_{11}^2}{N} \label{eq:map1} \\
+    \lambda'_{10} &= \frac{2\lambda_{00}\lambda_{11}}{N} \label{eq:map2} \\
+    \lambda'_{01} &= \frac{\lambda_{01}^2 + \lambda_{10}^2}{N} \label{eq:map3} \\
+    \lambda'_{11} &= \frac{2\lambda_{01}\lambda_{10}}{N} \label{eq:map4}
+\end{align}
+
+where $N$ is the probability of success (normalization factor):
+\begin{equation}
+    N = (\lambda_{00} + \lambda_{11})^2 + (\lambda_{01} + \lambda_{10})^2
+\end{equation}
+\subsubsection{Convergence and Threshold}
+The recursive map defined by Eqs. (\ref{eq:map1})-(\ref{eq:map4}) possesses an attracting fixed point at:
+\begin{equation}
+    \lambda_{00} = 1, \quad \lambda_{01}=\lambda_{10}=\lambda_{11}=0
+\end{equation}
+This implies that iteration of the protocol drives the state toward the maximally entangled state $|\Phi^+\rangle$. The purification is successful for any state where the initial fidelity $F = \lambda_{00} > 1/2$. 
+
+Crucially, compared to BBPSSW, the DEJMPS protocol:
+\begin{enumerate}
+    \item Converges faster (requires fewer resources for the same target fidelity).
+    \item Has a higher threshold for local gate noise ($p_{min} \approx 0.96$ for BBPSSW vs $p_{min}$ significantly lower for DEJMPS).
+    \item Can effectively purify states dominated by phase noise (which BBPSSW cannot efficiently handle).
+\end{enumerate}
 \section{One-Way Entanglement Purfication}
 
 The \cite{Equivalence} paper describes how we can construct one-way entanglement purification protocols (1-EPP) which basically involve Alice and Bob performing local operations and measurements on their respective sharded bits. We now deviate from the usual 2-EPP protocols (like BBPSSW) and have only Alice communicate her measuremnt results to Bob. Bob now uses these in conjunction with his own menasurments and performs local operations to recover the entangled state. One such protocol is one-way hashing.
@@ -706,7 +781,7 @@ We can do the same for the encoded state $\ket{1}_L$ by applying a logical X gat
 
 \subsection{BBPSSW Protocol}
 
-We also verify the working of this protocol for werner states with initial fidelity $F > 0.5$. We a more simplified circuit for the protocol without the stabilizer operations as given in \cite{paper2} as we only really need to analyse fielity improvement and not how a werner state is created. We run this cicuit using an input werner state with fidelity values greater than 0.5 and measure the output fidelity. We also keep track of the success probability of the protocol. The results are as follows:
+We also verify the working of this protocol for werner states with initial fidelity $F > 0.5$. We use a more simplified circuit for the protocol without the stabilizer operations as given in \cite{paper2} as we only really need to analyse fidelity improvement and not how a werner state is created. We run this cicuit using an input werner state with fidelity values greater than 0.5 and measure the output fidelity. We also keep track of the success probability of the protocol. The results are as follows:
 
 \begin{figure}[!htbp]
     \centering
@@ -720,6 +795,23 @@ We also verify the working of this protocol for werner states with initial fidel
     \includegraphics[width=0.45\textwidth]{../Codes/results/BBPSSW/FidelityPlot.png}
     \caption{Fidelity Improvement using BBPSSW Protocol}
     \label{fig:BBPSSWResults}
+\end{figure}
+
+\subsection{DEJMPS Protocol}
+We implemented a comparative simulation of the DEJMPS protocol using Qiskit. The experiment initialized a system of two noisy Bell pairs using \texttt{SetDensityMatrix}, constructing a specific input state with an initial fidelity of $F_{in} = 0.8000$ and a noise profile dominated by phase errors (the $|\Phi^-\rangle$ component). For the DEJMPS implementation, we introduced conjugate local rotations---applying $R_x(\frac{\pi}{2})$ to Alice's qubits and $R_x(-\frac{\pi}{2})$ to Bob's---prior to the standard bilateral CNOT gates used in BBPSSW. The experimental results highlighted the critical advantage of this basis change: the BBPSSW protocol failed to purify the state, resulting in a reduced fidelity of $0.7320$, as the standard CNOT parity check is insensitive to Z-errors and propagates them across the control qubits. In contrast, the DEJMPS protocol successfully increased the fidelity to $0.9007$. This confirms that the local rotations effectively converted the dominant Z-errors into X-errors, allowing the subsequent parity check to detect and filter the noise, thereby validating the protocol's robustness against phase-biased noise.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/DEJMPS/PurificationCircuit.png}
+    \caption{DEJMPS Protocol Circuit}
+    \label{fig:DEJMPSCircuit}
+\end{figure} 
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/DEJMPS/FidelityPlot.png}
+    \caption{Superiority of DEJMPS over BBPSSW Protocol}
+    \label{fig:DEJMPSResults}
 \end{figure}
 
 
