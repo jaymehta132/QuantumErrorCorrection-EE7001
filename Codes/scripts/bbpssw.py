@@ -145,10 +145,10 @@ if __name__ == "__main__":
 
     # Optionally, plot the results
     plt.figure(figsize=(8, 5))
-    plt.scatter(fin_values, fout, marker='o', label='Final Fidelity')
     plt.plot(fin_values, f_out_theory, linestyle='-', label='Theoretical Final Fidelity', color='red')
-    plt.plot(fin_values, fin_values, linestyle='--', label='Input Fidelity (Reference)')
+    plt.scatter(fin_values, fout, marker='o', label='Final Fidelity')
     plt.plot(fin_values, np.array(success_probs), marker='x', label='Success Probability')
+    plt.plot(fin_values, fin_values, linestyle='--', label='Input Fidelity (Reference)')
     plt.xlabel('Input Fidelity (F_in)')
     plt.ylabel('Fidelity')
     plt.title('BBPSSW Protocol: Input vs Final Fidelity')
