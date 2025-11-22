@@ -657,20 +657,70 @@ This histogram shows that the output is "0" with a probability of 1, indicating 
 
 \subsection{Generating Encoded States for [7, 1, 3] Code}
 
-\begin{figure}[h]
+This code implements the circuit to generate the encoded states $\ket{0}_L$ and $\ket{1}_L$ for the [7, 1, 3] code using its stabilizers. The state $\ket{0}_L$ is given by:
+
+\begin{equation}
+    \begin{aligned}
+        \ket{0}_L = \frac{1}{\sqrt{8}} (&\ket{0000000} + \ket{1010101} \\ 
+        + &\ket{0110011} + \ket{1100110} + \ket{0001111} \\
+        + &\ket{1011010} + \ket{0111100} + \ket{1101001})
+    \end{aligned}  
+\end{equation}
+
+The circuit for the zero state was constructed exactly as given in \cite{paper1} using stabilizers. We then measure all qubits to verify the final state. The circuits and results are as follows:
+
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.45\textwidth]{../Codes/results/Stabilizer/Circuit_EncZero.png}
     \caption{Circuit for encoded state $\ket{0}_L$}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.45\textwidth]{../Codes/results/Stabilizer/EncZero_Results.png}
     \caption{Final Measurements for $\ket{0}_L$}
 \end{figure}
 
+We can do the same for the encoded state $\ket{1}_L$ by applying a logical X gate to $\ket{0}_L$. The logical X gate for this code is given by $X_L = X_1 X_2 X_3$. The circuit and results are as follows:
+
+\begin{equation}
+    \begin{aligned}
+        \ket{1}_L = \frac{1}{\sqrt{8}} (&\ket{1111111} + \ket{0101010} \\ 
+        + &\ket{1001100} + \ket{0011001} + \ket{1110000} \\
+        + &\ket{0100101} + \ket{1000011} + \ket{0010110})
+    \end{aligned}
+\end{equation}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/Stabilizer/Circuit_EncOne.png}
+    \caption{Circuit for encoded state $\ket{1}_L$}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/Stabilizer/EncOne_Results.png}
+    \caption{Final Measurements for $\ket{1}_L$}
+\end{figure}
 
 \subsection{BBPSSW Protocol}
+
+We also verify the working of this protocol for werner states with initial fidelity $F > 0.5$. We a more simplified circuit for the protocol without the stabilizer operations as given in \cite{paper2} as we only really need to analyse fielity improvement and not how a werner state is created. We run this cicuit using an input werner state with fidelity values greater than 0.5 and measure the output fidelity. We also keep track of the success probability of the protocol. The results are as follows:
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/BBPSSW/PurificationCircuit.png}
+    \caption{BBPSSW Protocol Circuit}
+    \label{fig:BBPSSWCircuit}
+\end{figure} 
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../Codes/results/BBPSSW/FidelityPlot.png}
+    \caption{Fidelity Improvement using BBPSSW Protocol}
+    \label{fig:BBPSSWResults}
+\end{figure}
 
 
 \section{Conclusion}
