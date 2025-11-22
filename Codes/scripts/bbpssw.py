@@ -100,9 +100,20 @@ def calculate_fidelities(result):
 
     return f_out, prob_success
 
+def output_fidelity(f):
+    return (f**2 + (1-f)**2 / 9) / (f**2 + (2 * f * (1 - f)) / 3 + (5 * (1 - f)**2) / 9)
+
+def get_output_fidelity(f_in_values):
+    f_out_values = []
+    for f_in in f_in_values:
+        f_out = output_fidelity(f_in)
+        f_out_values.append(f_out)
+    return f_out_values
+    
 if __name__ == "__main__":
 
     fin_values = np.linspace(0.5, 1.0, 11)
+    f_out_theory = get_output_fidelity(fin_values)
     fout = []
     success_probs = []
     for F_in in fin_values:
@@ -134,7 +145,8 @@ if __name__ == "__main__":
 
     # Optionally, plot the results
     plt.figure(figsize=(8, 5))
-    plt.plot(fin_values, fout, marker='o', label='Final Fidelity')
+    plt.scatter(fin_values, fout, marker='o', label='Final Fidelity')
+    plt.plot(fin_values, f_out_theory, linestyle='-', label='Theoretical Final Fidelity', color='red')
     plt.plot(fin_values, fin_values, linestyle='--', label='Input Fidelity (Reference)')
     plt.plot(fin_values, np.array(success_probs), marker='x', label='Success Probability')
     plt.xlabel('Input Fidelity (F_in)')
