@@ -1,0 +1,8 @@
+\beamer@sectionintoc {1}{Motivation and Overview}{3}{0}{1}
+\beamer@sectionintoc {2}{Quantum Errors}{4}{0}{2}
+\beamer@sectionintoc {3}{3- and 9-qubit Codes}{7}{0}{3}
+\beamer@sectionintoc {4}{Stabilizer Codes}{9}{0}{4}
+\beamer@sectionintoc {5}{Digitization of Quantum Noise}{11}{0}{5}
+\beamer@sectionintoc {6}{Entanglement Purification}{12}{0}{6}
+\beamer@sectionintoc {7}{One-way Protocols and QECC}{15}{0}{7}
+\beamer@sectionintoc {8}{Simulations and Results}{19}{0}{8}

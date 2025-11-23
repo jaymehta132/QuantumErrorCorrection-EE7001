@@ -1,0 +1,335 @@
+\documentclass{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\usepackage[utf8]{inputenc}
+\usepackage{braket}
+\usepackage{amsmath, amsfonts}
+
+\title[Quantum Error Correction]{Quantum Error Correction and Entanglement Purification}
+\author[EE7001 Project]{Tanay Bhat \and Jay Mehta \and Rajwardhan Toraskar}
+\institute[IIT Bombay]{Department of Electrical Engineering\\
+Indian Institute of Technology Bombay}
+\date{}
+
+\begin{document}
+
+%----------------- Title -----------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%----------------- Outline -----------------
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Motivation and Overview}
+
+\begin{frame}{Motivation}
+  \begin{itemize}
+    \item Quantum information is fragile and susceptible to errors which may arise due to faulty gates, environmental decoherence etc.
+    \item Reliable quantum computation and communication require active protection of quantum states which maybe achieved through:
+    \begin{itemize}
+      \item \textbf{Quantum Error Correction (QEC)}: encode logical qubits into many physical qubits, detect and correct errors.
+      \item \textbf{Entanglement Purification}: distill high-fidelity entangled pairs from many noisy copies.
+    \end{itemize}
+    \item In the project, we shall explore some QEC codes and bipartite purification protocols, and implement them in Qiskit. We shall also establish the equivalence between one-way entanglement purification and quantum error correction codes.
+  \end{itemize}
+\end{frame}
+
+\section{Quantum Errors}
+
+\begin{frame}{Types of Quantum Errors - Coherent Errors}
+  \begin{itemize}
+    \item These errors arise from imperfect control of quantum gates, leading to small deviations in the intended operations.
+    \item For instance, consider a small rotation $e^{i\epsilon X}$ applied N times to $\ket{0}$.
+    \item We have the following expression for the final state:
+    \begin{equation}
+        \ket{\psi} = \prod_{i = 1}^{N} e^{i\epsilon X} \ket{0} = \cos(N\epsilon)\ket{0} + i\sin(N\epsilon)\ket{1}
+    \end{equation}
+    \item The probability of measuring $\ket{1}$ is given by:
+    \begin{equation}
+        P(\ket{1}) = \sin^2(N\epsilon) \approx N^2\epsilon^2 \quad \text{for small } \epsilon.
+    \end{equation}
+    \item Hence, the error probability grows as $\mathcal{O}(N^2 \epsilon^2)$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Types of Quantum Errors - Environmental Decoherence}
+  \begin{itemize}
+    \item Quantum systems can become entangled with their environment, leading to loss of coherence.
+    \item For example, consider an environment with states $\ket{e_0}$ and $\ket{e_1}$ such that the environment state flips when the qubit is in state $\ket{1}$:
+    \item On applying the operation $HIH$ (ideally identity) on the qubit $\ket{0}\ket{e_0}$, we have:
+    \begin{equation}
+        \ket{\psi} = HIH \ket{0}\ket{e_0} = \frac{1}{2}(\ket{0} + \ket{1})\ket{e_0} + \frac{1}{2}(\ket{0} - \ket{1})\ket{e_1}
+    \end{equation}
+    \item Tracing out the environment, the reduced density matrix of the qubit becomes:
+    \begin{equation}
+        \rho = \frac{1}{2}(\ket{0}\bra{0} + \ket{1}\bra{1})
+    \end{equation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Types of Quantum Errors - Other Imperfections}
+  \begin{itemize}
+    \item \textbf{Measurement errors:} Faulty measurement apparatus can yield incorrect outcomes. \begin{itemize}
+        \item Consider the operators:
+        \begin{equation*}
+            \begin{aligned}
+                F_0 = (1-p)\ket{0}\bra{0} + p\ket{1}\bra{1} \\
+                F_1 = p\ket{0}\bra{0} + (1-p)\ket{1}\bra{1}
+            \end{aligned}
+        \end{equation*}
+        \item The final state after measurement will be a superposition state weighted by these probabilities.
+    \end{itemize}
+    \item \textbf{Qubit loss:} Physical qubits may be lost due to decoherence or operational errors, leading to incomplete information about the quantum state.
+    \item \textbf{Initialization errors:} Errors during state preparation can lead to incorrect initial states, affecting subsequent computations.
+    \item \textbf{Qubit Leakage:} Qubits may leak out of the computational subspace into higher energy levels, which may introduce unwanted dynamics in a quantum circuit.
+  \end{itemize}
+\end{frame}
+
+\section{3- and 9-qubit Codes}
+
+\begin{frame}{3-qubit Bit-flip Code}
+  \begin{itemize}
+    \item Encodes one logical qubit into three physical qubits:
+    \[
+      \ket{0}_L = \ket{000}, \quad \ket{1}_L = \ket{111}.
+    \]
+    \item \textbf{Distance} $d = 3 \Rightarrow$ corrects one bit-flip error ($t = \lfloor (d-1)/2 \rfloor = 1$).
+    \item Error detection via parity checks using ancilla qubits.
+    \item For coherent $X$-rotations on each qubit:
+    \[
+      F_{\text{unencoded}} \approx 1 - \epsilon^2, \qquad
+      F_{\text{encoded}} \approx 1 - \epsilon^6
+    \]
+    (after successful syndrome measurement and correction).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{9-qubit Shor Code}
+  \begin{itemize}
+    \item Combines 3-qubit bit-flip and 3-qubit phase-flip codes.
+    \[
+      \ket{0}_L = \frac{1}{2\sqrt{2}}\bigl(\ket{000}+\ket{111}\bigr)^{\otimes 3}
+    \]
+    \[
+      \ket{1}_L = \frac{1}{2\sqrt{2}}\bigl(\ket{000}-\ket{111}\bigr)^{\otimes 3}
+    \]
+    \item Corrects any single-qubit error (arbitrary Pauli $X,Y,Z$).
+    \item Bit-flip correction: apply 3-qubit repetition code within each block.
+    \item Phase-flip correction: compare phases between the three blocks.
+  \end{itemize}
+\end{frame}
+
+\section{Stabilizer Codes}
+
+\begin{frame}{Stabilizer Formalism}
+  \begin{itemize}
+    \item A state $\ket{\psi}$ is \emph{stabilized} by $K$ if $K\ket{\psi} = \ket{\psi}$.
+    \item Stabilizer group $G$: Abelian subgroup of the $n$-qubit Pauli group $P_n$.
+    \item Code space: simultaneous $+1$ eigenspace of all generators.
+    \item For $n$ physical qubits and $k$ independent generators:
+    \[
+      \dim(\text{code space}) = 2^{n-k}
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Steane [[7,1,3]] Code}
+  \begin{itemize}
+    \item CSS stabilizer code with 6 generators:
+    \begin{itemize}
+      \item 3 $X$-type stabilizers.
+      \item 3 $Z$-type stabilizers.
+    \end{itemize}
+    \item Encodes 1 logical qubit, distance $d=3$ (corrects 1 arbitrary Pauli error).
+    \item Logical operators: e.g.\ $Z_L = Z^{\otimes 7}$, $X_L = X_1 X_2 X_3$.
+    \item State preparation:
+    \begin{itemize}
+      \item Start from $\ket{0}^{\otimes 7}$.
+      \item Measure $X$-type stabilizers with ancillas.
+      \item Apply classically controlled $Z$ corrections to enforce $+1$ eigenvalues.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Digitization of Quantum Noise}
+
+\begin{frame}{Digitization via Syndrome Measurement}
+  \begin{itemize}
+    \item Realistic noise is continuous (coherent rotations, Lindblad evolution).
+    \item Any CPTP map can be expanded in the Pauli basis:
+    \[
+      \rho \rightarrow \sum_k A_k \rho A_k^\dagger,\quad A_k = \sum_j \alpha_{k,j} P_j.
+    \]
+    \item Syndrome measurement projects superpositions of errors onto definite Pauli errors:
+    \[
+      \rho \rightarrow P_j \rho P_j \quad \text{with probability } |\alpha_j|^2.
+    \]
+    \item QEC effectively reduces continuous errors to \textbf{stochastic Pauli faults} with some error rate $p$.
+  \end{itemize}
+\end{frame}
+
+\section{Entanglement Purification}
+
+\begin{frame}{Werner States}
+  \begin{itemize}
+    \item Start from general mixed state in Bell basis:
+    \[
+      \rho'_{AB} = \sum_{k_1,k_2,j_1,j_2} \lambda_{k_1k_2j_1j_2}
+      \ket{\phi_{k_1k_2}}\bra{\phi_{j_1j_2}}.
+    \]
+    \item Random bilateral operations can be used to remove off-diagonal terms
+    without changing fidelity with $\ket{\phi_{00}}$.
+    \item Resulting Werner state:
+    \[
+      \rho_W(x) = x \ket{\phi_{00}}\bra{\phi_{00}} + \frac{1-x}{4} I_4.
+    \]
+    \item Any purification protocol that works for Werner states works for all
+    states with the same fidelity.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{BBPSSW Protocol}
+  \begin{itemize}
+    \item Input: two copies of a Werner state with fidelity $F > 1/2$.
+    \item Steps:
+    \begin{enumerate}
+      \item Depolarize (twirl) to Werner form.
+      \item Apply bilateral CNOT: $A_1 \rightarrow A_2$, $B_1 \rightarrow B_2$.
+      \item Measure target pair; keep source pair only for certain outcomes.
+    \end{enumerate}
+    \item Updated fidelity (conditional on success):
+    \[
+      F' = \frac{F^2 + \bigl(\frac{1-F}{3}\bigr)^2}
+                 {F^2 + \frac{2F(1-F)}{3} + 5\bigl(\frac{1-F}{3}\bigr)^2}.
+    \]
+    \item Fidelity increases with each successful round; yield decreases due to discarding pairs.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{DEJMPS Protocol}
+  \begin{itemize}
+    \item Designed for Bell-diagonal states; more efficient than BBPSSW.
+    \item Key ideas:
+    \begin{itemize}
+      \item Local basis rotations convert phase errors into bit errors.
+      \item Bilateral CNOT and post-selection on matching measurement outcomes.
+    \end{itemize}
+    \item Coefficients in Bell basis $\{\lambda_{00},\lambda_{01},\lambda_{10},\lambda_{11}\}$ update as:
+    \[
+      \lambda'_{00} = \frac{\lambda_{00}^2 + \lambda_{11}^2}{N},\quad
+      \lambda'_{10} = \frac{2\lambda_{00}\lambda_{11}}{N},
+    \]
+    \[
+      \lambda'_{01} = \frac{\lambda_{01}^2 + \lambda_{10}^2}{N},\quad
+      \lambda'_{11} = \frac{2\lambda_{01}\lambda_{10}}{N},
+    \]
+    \[
+      N = (\lambda_{00} + \lambda_{11})^2 + (\lambda_{01} + \lambda_{10})^2.
+    \]
+    \item Converges to $\ket{\Phi^+}$ for initial fidelity $F = \lambda_{00} > 1/2$.
+  \end{itemize}
+\end{frame}
+
+\section{One-way Protocols and QECC}
+
+\begin{frame}{One-way Hashing Protocol}
+  \begin{itemize}
+    \item Alice and Bob share $n$ noisy Bell pairs (Bell-diagonal state $\rho$).
+    \item Represent each pair by 2-bit error label $(i,j)$ (phase and amplitude errors).
+    \item Repeatedly:
+    \begin{itemize}
+      \item Choose random parity vector $s$.
+      \item Use local unitaries + bilateral CNOT to map $s \cdot x$ into one pair.
+      \item Measure and discard that pair; record the parity.
+    \end{itemize}
+    \item After sacrificing $\approx nS(\rho)$ pairs, remaining $m \approx n(1-S(\rho))$
+    pairs can be corrected.
+    \item \textbf{Asymptotic yield}: $m/n \approx 1 - S(\rho)$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Equivalence of 1-EPP and QECC}
+  \begin{itemize}
+    \item Let $Q(\chi)$ be the quantum capacity of a channel $\chi$.
+    \item Let $D(M)$ be the one-way distillable entanglement of a mixed state $M$.
+    \item Using teleportation with noisy entangled pairs:
+    \begin{itemize}
+      \item Any QECC of rate $R$ yields a 1-EPP with yield $\ge R$:
+      \[
+        Q(\chi(M)) \le D(M).
+      \]
+      \item Any 1-EPP with yield $R$ yields a QECC of rate $\ge R$:
+      \[
+        D(M) \le Q(\chi(M)).
+      \]
+    \end{itemize}
+    \item Therefore: \textbf{one-way entanglement purification and QECC are equivalent}
+    in terms of achievable rates.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Equivalence Proof: $Q(\chi(M)) \le D(M)$ }
+    Consider a quantum teleportation setup where Alice and Bob share multiple copies of a mixed entangled state $M$ instead of perfect Bell pairs. We construct a purification protocol as follows:
+  \begin{itemize}
+    \item Alice prepares to send $n$ qubits by preparing $m$ Bell pairs and $n-m$ ancilla qubits in state $\ket{0}$. Encode one half of each Bell pair and the ancillas using a QECC of rate $R = m/n$.
+    \item Alice sends her encoded qubits through the channel $\chi(M)$ to Bob.
+    \item Bob receives the qubits and performs error correction using the QECC and recovers the $m$ halves of the Bell pairs.
+  \end{itemize}
+  Hence $n$ copies of the mixed state $M$ were used to get $m$ high-fidelity Bell pairs, yielding a distillation rate of $R = m/n$. The yield of such a 1-EPP is at least as large as the rate of the QECC used, leading to: 
+    \[
+        Q(\chi(M)) \le D(M).
+    \]
+\end{frame}
+
+\begin{frame}{Equivalence Proof: $Q(\chi(M)) \ge D(M)$}
+    Consider a one-way entanglement purification protocol (1-EPP) that distills $m$ high-fidelity Bell pairs from $n$ copies of a mixed state $M$. We construct a QECC as follows:
+  \begin{itemize}
+    \item Alice and Bob use the 1-EPP to distill $m$ high-fidelity Bell pairs from $n$ copies of $M$.
+    \item Alices prepares to send $m$ qubits of quantum information. She uses the distilled Bell pairs to teleport these qubits to Bob.
+  \end{itemize}
+  Hence we are able to send $m$ qubits of quantum information without error using $n$ uses of the channel $\chi(M)$, yielding a quantum communication rate of $R = m/n$. The rate of such a QECC is at least as large as the yield of the 1-EPP used, leading to:
+    \[
+        D(M) \le Q(\chi(M)).
+    \]
+\end{frame}
+
+\section{Simulations and Results}
+
+\begin{frame}{Qiskit Implementations}
+  \begin{itemize}
+    \item Implemented in Qiskit:
+    \begin{itemize}
+      \item 3-qubit bit-flip code (X error and coherent rotation suppression).
+      \item 9-qubit Shor code for correcting a $Z$ error.
+      \item Steane [[7,1,3]] code state preparation for $\ket{0}_L$ and $\ket{1}_L$.
+      \item BBPSSW and DEJMPS entanglement purification circuits.
+    \end{itemize}
+    \item Results:
+    \begin{itemize}
+      \item Histograms show deterministic recovery of logical states in 3- and 9-qubit codes.
+      \item Numerical fidelity matches theoretical predictions ($1-\epsilon^6$ vs $1-\epsilon^2$).
+      \item Purification protocols increase fidelity for initial $F>0.5$, with non-unit success probability.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusion}
+  \begin{itemize}
+    \item Demonstrated how:
+    \begin{itemize}
+      \item Simple repetition and Shor codes protect against bit-flip and phase-flip errors.
+      \item Stabilizer formalism generalizes QEC and simplifies encoding/decoding.
+      \item Syndrome measurements digitize continuous noise into discrete Pauli errors.
+      \item Entanglement purification (BBPSSW, DEJMPS, hashing) enhances entanglement fidelity.
+    \end{itemize}
+    \item Established conceptual link and rate-equivalence between 1-EPP and QECC.
+    \item Simulations validate theoretical performance of the studied codes and protocols.
+  \end{itemize}
+\end{frame}
+
+\end{document}
