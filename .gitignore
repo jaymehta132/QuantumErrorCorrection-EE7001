@@ -19,3 +19,13 @@ PPT/midterm/*.synctex.gz
 PPT/midterm/*.out
 PPT/midterm/*.nav
 PPT/midterm/*.snm
+PPT/endterm/main.aux
+PPT/endterm/*.bbl
+PPT/endterm/*.blg
+PPT/endterm/*.fdb_latexmk
+PPT/endterm/*.fls
+PPT/endterm/*.log
+PPT/endterm/*.synctex.gz
+PPT/endterm/*.out
+PPT/endterm/*.nav
+PPT/endterm/*.snm

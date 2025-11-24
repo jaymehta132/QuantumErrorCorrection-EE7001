@@ -5,13 +5,22 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{braket}
-\usepackage{amsmath, amsfonts}
+\usepackage{amsmath, amsfonts, graphicx}
+\usepackage{subcaption}
 
 \title[Quantum Error Correction]{Quantum Error Correction and Entanglement Purification}
 \author[EE7001 Project]{Tanay Bhat \and Jay Mehta \and Rajwardhan Toraskar}
 \institute[IIT Bombay]{Department of Electrical Engineering\\
 Indian Institute of Technology Bombay}
 \date{}
+
+
+\AtBeginSection[]{
+  \begin{frame}{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
 
 \begin{document}
 
@@ -316,6 +325,256 @@ Indian Institute of Technology Bombay}
       \item Purification protocols increase fidelity for initial $F>0.5$, with non-unit success probability.
     \end{itemize}
   \end{itemize}
+\end{frame}
+
+\subsection{3-Bit Code for Bit-Flip Error}
+\begin{frame}{3-Bit Code for Bit-Flip (X) Error}
+\textbf{Process:}
+\begin{enumerate}
+    \item Encode logical qubit using Hadamard + 2 CNOTs.
+    \item Inject bit-flip error (X gate) on one qubit.
+    \item Detect error using 2 ancilla qubits and 4 CNOTs.
+    \item Apply conditional correction based on syndrome.
+    \item Decode and measure final qubit.
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Result:} Measured state “001” with probability 1 — successful correction.
+
+\begin{figure}
+  
+  \centering
+  \includegraphics[width=0.7\textwidth]{../../Codes/results/3bitCode/3bitCodeCircuit.png} \\[4pt]
+  \caption{3-bit Code Circuit for X Error}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{3-Bit Code: X Error Results}
+\begin{itemize}
+    \item Histogram confirms complete recovery of logical qubit.
+    \item Fidelity maintained post-correction.
+    \item Demonstrates robustness of simple repetition code for single X-error.
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.55\textwidth]{../../Codes/results/3bitCode/3bitCodeHistogram.png}
+    \caption{3-bit Code Results for X Error}
+    \label{fig:3bitCodeHistogram}
+\end{figure}
+% \centering
+% \includegraphics[width=0.55\textwidth]{../../Codes/results/3bitCode/3bitCodeHistogram.png} \\[4pt]
+% {\scriptsize Fig. 2: 3-bit Code Results for X Error}
+\end{frame}
+
+%------------------------------------------------
+\subsection{3-Bit Code for Phase Error}
+\begin{frame}{3-Bit Code for Phase Error}
+\textbf{Goal:} Verify suppression of coherent rotation errors $U = e^{i\epsilon \sigma_x}$.
+
+\textbf{Procedure:}
+\begin{itemize}
+    \item Encode qubit via CNOTs.
+    \item Apply small X-rotation ($\epsilon$) to all three data qubits.
+    \item Measure syndrome using two ancillas.
+    \item Decode and compute fidelity.
+\end{itemize}
+
+\textbf{Observation:}
+\[
+F_{\text{unencoded}} = 1 - \epsilon^2 \quad \text{vs.} \quad F_{\text{encoded}} = 1 - \epsilon^6
+\]
+
+\begin{figure}[h!]
+    \centering
+
+    \begin{subfigure}[b]{0.3\columnwidth}
+        \centering
+        \includegraphics[width=0.75\textwidth]{../../Codes/results/3bitPhaseEC/EncodingCircuit.png}
+        \caption{Encoding Circuit}
+        \label{fig:3bitPhaseECCircuit}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\columnwidth}
+        \centering
+        \includegraphics[width=0.75\textwidth]{../../Codes/results/3bitPhaseEC/SyndromeMeasurementCircuit.png}
+        \caption{Syndrome Measurement Circuit}
+        \label{fig:3bitPhaseDecodingCircuit}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\columnwidth}
+        \centering
+        \includegraphics[width=0.75\textwidth]{../../Codes/results/3bitPhaseEC/DecodingCircuit.png}
+        \caption{Decoding Circuit}
+        \label{fig:3bitPhaseAncillaCircuit}
+    \end{subfigure}
+
+    \caption{3-bit Code Circuits for Phase error}
+    \label{fig:three_images}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\subsection{9-Bit Shor Code for Z Error}
+\begin{frame}{9-Bit Shor Code for Z Error}
+\textbf{Overview:}
+\begin{itemize}
+    \item Protects logical qubit against arbitrary single-qubit errors.
+    \item Encodes $|+\rangle$ using layered 3x3 block structure:
+    \begin{itemize}
+        \item Inner: Bit-flip code
+        \item Outer: Phase-flip code
+    \end{itemize}
+    \item Inject phase-flip (Z) error on one qubit.
+    \item Use 6 ancillas for syndrome extraction.
+\end{itemize}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.45\textwidth]{../../Codes/results/9bitCode/SyndromeMeasurementCircuit.png} \\[4pt]
+\caption{9-bit Shor Code — Syndrome Measurement}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{9-Bit Shor Code Results}
+\begin{itemize}
+    \item Syndrome bits identify error location.
+    \item Corrective Z operation restores logical state.
+    \item Decoded qubit measured in X-basis gives deterministic “0”.
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Result:} Successful recovery of logical qubit — validates Shor code's ability to correct any single-qubit error.
+
+\begin{figure}[h!]
+  
+  \centering
+  \includegraphics[width=0.45\textwidth]{../../Codes/results/9bitCode/FinalHistogram.png} \\[4pt]
+  \caption{9-bit Code Results for Z Error}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Steane [[7,1,3]] Code State Preparation}
+  \textbf{Objective:} Prepare logical states $|0\rangle_L$ and $|1\rangle_L$ using Steane code.
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{../../Codes/results/Stabilizer/Circuit_EncZero.png} \\[4pt]
+    \caption{Steane Code Encoding Circuit}
+  \end{figure}
+   If we start with data qubits in state $|0\rangle^{\otimes 7}$, we encode $|0\rangle_L$. To encode $|1\rangle_L$, we flip all the data qubits before encoding i.e. start with $|1\rangle^{\otimes 7}$.
+\end{frame}
+
+\begin{frame}{Steane Code Results}
+  \textbf{Expected outcomes for logical states:}
+  \begin{equation}
+  \begin{aligned}
+    |0\rangle_L &= \frac{1}{\sqrt{8}} (|0000000\rangle + |1010101\rangle + |0110011\rangle + |1100110\rangle \\
+    &\quad + |0001111\rangle + |1011010\rangle + |0111100\rangle + |1101001\rangle) \\
+    |1\rangle_L &= \frac{1}{\sqrt{8}} (|1111111\rangle + |0101010\rangle + |1001100\rangle + |0011001\rangle \\
+    &\quad + |1110000\rangle + |0100101\rangle + |1000011\rangle + |0010110\rangle)
+  \end{aligned}
+  \end{equation}
+\end{frame}
+\begin{frame}{Steane Code Results (Contd.)}
+  \begin{itemize}
+    \item Measured histograms for both $|0\rangle_L$ and $|1\rangle_L$ shows expected outcomes as shown in Fig. \ref{fig:SteaneResults}.
+    \item Observed probabilities closely match theoretical values of $1/8 = 0.125$ for each expected outcome.
+    \item Minor deviations attributed to statistical fluctuations and simulator noise.
+    \item Confirms successful preparation of logical states using Steane code.
+  \end{itemize}
+  \textbf{Note:} The bit order is flipped in the histogram results.
+
+  \begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.45\columnwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{../../Codes/results/Stabilizer/EncZero_Results.png}
+        \caption{Logical $|0\rangle_L$}
+        \label{fig:SteaneEncZero}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\columnwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{../../Codes/results/Stabilizer/EncOne_Results.png}
+        \caption{Logical $|1\rangle_L$}
+        \label{fig:SteaneEncOne}
+    \end{subfigure}
+    \caption{Steane Code State Preparation Results}
+    \label{fig:SteaneResults}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{BBPSSW Entanglement Purification}
+  \textbf{Protocol Steps:}
+  \begin{enumerate}
+    \item Start with two Werner states $\rho_W(F)$ shared between Alice and Bob.
+    \item Apply bilateral CNOTs: $A_1 \rightarrow A_2$, $B_1 \rightarrow B_2$.
+    \item Measure target pair ($A_2$, $B_2$) in computational basis.
+    \item Keep source pair ($A_1$, $B_1$) only if measurement outcomes match.
+  \end{enumerate}
+
+  \textbf{Fidelity Update:} After successful purification, the fidelity updates as:
+  \[
+    F' = \frac{F^2 + \left(\frac{1-F}{3}\right)^2}{F^2 + \frac{2F(1-F)}{3} + 5\left(\frac{1-F}{3}\right)^2}.
+  \]
+
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../../Codes/results/BBPSSW/PurificationCircuit.png} \\[4pt]
+    \caption{BBPSSW Entanglement Purification Circuit}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{BBPSSW Results}
+  \begin{itemize}
+    \item Simulated BBPSSW protocol for various initial fidelities $F$.
+    \item Observed increase in fidelity $F'$ after purification, matching theoretical predictions.
+    \item Success probability decreases with lower initial fidelity.
+    \item Confirms effectiveness of BBPSSW in enhancing entanglement quality.
+  \end{itemize}
+
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.55\textwidth]{../../Codes/results/BBPSSW/FidelityPlot.png} \\[4pt]
+    \caption{BBPSSW Purification Results}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{DEJMPS Entanglement Purification}
+  \textbf{Protocol Steps:}
+  \begin{enumerate}
+    \item Start with two Bell-diagonal states shared between Alice and Bob.
+    \item Apply local basis rotations to convert phase errors into bit errors.
+    \item Apply bilateral CNOTs: $A_1 \rightarrow A_2$, $B_1 \rightarrow B_2$.
+    \item Measure target pair ($A_2$, $B_2$) in computational basis.
+    \item Keep source pair ($A_1$, $B_1$) only if measurement outcomes match.
+  \end{enumerate}
+
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.45\textwidth]{../../Codes/results/DEJMPS/PurificationCircuit.png} \\[4pt]
+    \caption{DEJMPS Entanglement Purification Circuit}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}{DEJMPS Results}
+  \begin{itemize}
+    \item Simulated DEJMPS protocol for various initial fidelities $F$.
+    \item Observed increase in fidelity $F'$ after purification, consistent with theoretical expectations.
+    \item Higher efficiency compared to BBPSSW for the same initial fidelity.
+    \item Validates DEJMPS as a superior entanglement purification method.
+  \end{itemize}
+
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.55\textwidth]{../../Codes/results/DEJMPS/FidelityPlot.png} \\[4pt]
+    \caption{DEJMPS Purification Results}
+  \end{figure}
+  
 \end{frame}
 
 \begin{frame}{Conclusion}
